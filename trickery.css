@@ -44,7 +44,7 @@
 #javascript-check:checked ~ #typescript-check:checked ~ .no-results,
 #javascript-check:checked ~ #jamstack-check:checked ~ .no-results,
 #javascript-check:checked ~ #react-check:checked ~ .no-results,
-#javascript-check:checked ~ #typescript-check:checked ~ .no-results,
+#javascript-check:checked ~ #python-check:checked ~ .no-results,
 /*ts*/
 #typescript-check:checked ~ #front-end-check:checked ~ .no-results,
 #typescript-check:checked ~ #python-check:checked ~ .no-results,
