@@ -36,8 +36,9 @@
 /* no results */
 
 .no-results {
-  margin-top: 20px;
+  margin-top: 40px;
   display: none;
+  text-align: center;
 }
 
 /*js*/
