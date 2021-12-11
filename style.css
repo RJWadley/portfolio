@@ -80,18 +80,6 @@ a:focus {
   background-position: -100% 0%;
 }
 
-.scroll-invite {
-  z-index: 1;
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  transform: translateX(-10px) rotate(45deg);
-  border-right: 2px solid var(--text-color);
-  border-bottom: 2px solid var(--text-color);
-}
-
 /* ================================================================= */
 /* hero style */
 
@@ -102,6 +90,18 @@ a:focus {
   align-items: center;
   justify-content: center;
   position: relative;
+}
+
+.scroll-invite {
+  z-index: 1;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translateX(-10px) rotate(45deg);
+  border-right: 2px solid var(--text-color);
+  border-bottom: 2px solid var(--text-color);
 }
 
 /* ================================================================= */
