@@ -94,4 +94,8 @@ h1 {
   }
   @keyframes slide {
   }
+
+  body {
+    prefers-reduced-motion: true;
+  }
 }
