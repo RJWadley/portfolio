@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Robbie Wadley</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="trickery.css" />
+    <link rel="stylesheet" href="visuals.css" />
+    <script defer src="index.js"></script>
+  </head>
+  <body>
+    <div class="pattern-container">
+      <div class="pattern"></div>
+    </div>
+    <div class="hero container">
+      <h1>
+        <span
+          class="typing"
+          style="--n: 17; animation-delay: 1s; animation-fill-mode: both;"
+          >Howdy, I'm Robbie
+        </span>
+      </h1>
+      <h2>
+        <span
+          class="typing"
+          style="--n: 87; animation-delay: 2s; animation-fill-mode: both;"
+        >
+          I'm a web developer who's passionate about programming, and I love to
+          make cool things!
+        </span>
+      </h2>
+      <div class="action">
+        <a href="#contact">Contact Me</a>
+      </div>
+      <div class="scroll-invite"></div>
+    </div>
+    <div class="work container">
+      <h1>My Best Work</h1>
+
+      <div class="filter-label">Filters</div>
+      <!-- filters have to be sibling to the object containers-->
+      <input
+        type="checkbox"
+        class="checkbox javascript"
+        id="javascript-check"
+      />
+      <label class="javascript" for="javascript-check"
+        >Javascript <span></span>
+      </label>
+      <input
+        type="checkbox"
+        class="checkbox typescript"
+        id="typescript-check"
+      />
+      <label class="typescript" for="typescript-check"
+        >Typescript <span></span>
+      </label>
+      <input type="checkbox" class="checkbox jamstack" id="jamstack-check" />
+
+      <label class="jamstack" for="jamstack-check">
+        JAMstack<span></span>
+      </label>
+      <input type="checkbox" class="checkbox canvas" id="canvas-check" />
+
+      <label class="canvas" for="canvas-check">Canvas API <span></span> </label>
+      <input type="checkbox" class="checkbox react" id="react-check" />
+      <label class="react" for="react-check">React <span></span> </label>
+      <input type="checkbox" class="checkbox front-end" id="front-end-check" />
+      <label class="front-end" for="front-end-check"
+        >Front-End Only <span></span>
+      </label>
+      <input type="checkbox" class="checkbox python" id="python-check" />
+      <label class="python" for="python-check">Python <span></span> </label>
+
+      <h2 class="no-results">No results, adjust your filters and try again!</h2>
+
+      <div class="rapidroute container split">
+        <div>
+          <h1>Rapid Route</h1>
+          <ul class="tags">
+            <li class="typescript">Typescript</li>
+            <li class="jamstack">JAMstack</li>
+          </ul>
+          <p class="description">
+            <b>Pathfinding</b> and <b>route generation</b> on a massive virtual
+            world littered with cities, airports, and rail lines, complete with
+            turn-by-turn style voice navigation
+          </p>
+          <div class="action">
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="http://www.mrtrapidroute.com"
+              >Visit Site</a
+            >
+            <br />
+            <br />
+            For More Context:
+            <br />
+            <br />
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="http://dynmap.minecartrapidtransit.net"
+              >World Map</a
+            >
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="http://wiki.minecartrapidtransit.net"
+              >World Wiki</a
+            >
+          </div>
+        </div>
+        <div class="image">
+          <picture>
+            <img src="https://picsum.photos/1920/1080" />
+          </picture>
+          <picture>
+            <img src="https://picsum.photos/1920/1000" />
+          </picture>
+        </div>
+      </div>
+
+      <div class="canvas-toys container split">
+        <div>
+          <h1>Canvas Toys</h1>
+          <ul class="tags">
+            <li class="javascript">Javascript</li>
+            <li class="canvas">Canvas API</li>
+            <li class="front-end">Front-End Only</li>
+          </ul>
+          <p class="description">
+            A collection of fun experiments that explore the HTML Canvas API
+          </p>
+          <div class="action">
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="http://rjwadley.github.io/"
+              >Visit Site</a
+            >
+          </div>
+        </div>
+        <div class="image">
+          <picture>
+            <img src="https://picsum.photos/1920/1080" />
+          </picture>
+          <picture>
+            <img src="https://picsum.photos/1920/1000" />
+          </picture>
+        </div>
+      </div>
+
+      <div class="map-builder container split">
+        <div>
+          <h1>Map Builder</h1>
+          <ul class="tags">
+            <li class="typescript">Typescript</li>
+            <li class="react">React</li>
+            <li class="jamstack">JAMstack</li>
+            <li class="canvas">Canvas API</li>
+          </ul>
+          <p class="description">
+            Collaboratively create street maps for fictional worlds in realtime
+          </p>
+          <div class="action">Public Release Early 2022</div>
+        </div>
+        <div class="image">
+          <picture>
+            <img src="https://picsum.photos/1920/1080" />
+          </picture>
+          <picture>
+            <img src="https://picsum.photos/1920/1000" />
+          </picture>
+        </div>
+      </div>
+
+      <div class="job-chart container split">
+        <div>
+          <h1>Job Chart</h1>
+          <ul class="tags">
+            <li class="javascript">Javascript</li>
+            <li class="front-end">Front End Only</li>
+          </ul>
+          <p class="description">
+            Track jobs and tasks on a chart that automatically rotates on a
+            daily or weekly basis
+          </p>
+          <div class="action">
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="http://rjwadley.github.io/jobchart"
+              >Visit Site</a
+            >
+          </div>
+        </div>
+        <div class="image">
+          <picture>
+            <img src="https://picsum.photos/1920/1080" />
+          </picture>
+          <picture>
+            <img src="https://picsum.photos/1920/1000" />
+          </picture>
+        </div>
+      </div>
+
+      <div class="crewmate-pets container split">
+        <div>
+          <h1>Crewmate Pets</h1>
+          <ul class="tags">
+            <li class="python">Python</li>
+          </ul>
+          <p class="description">
+            A gang of Among Us crewmates that run around on your desktop and
+            play rounds of the game. Can the crewmates find the impostor before
+            it's too late?
+          </p>
+          <div class="action">
+            Public Release Pending
+          </div>
+        </div>
+        <div class="image">
+          <picture>
+            <img src="https://picsum.photos/1920/1080" />
+          </picture>
+          <picture>
+            <img src="https://picsum.photos/1920/1000" />
+          </picture>
+        </div>
+      </div>
+    </div>
+    <div id="contact" class="contact container">
+      <h1>Contact Me</h1>
+      <div class="action">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://docs.google.com/document/d/1CWjeLfDxbIaFJodaBZg5fUGoBxvHfxI5glSud57o1FQ"
+          >View Resume</a
+        >
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://docs.google.com/document/d/1CWjeLfDxbIaFJodaBZg5fUGoBxvHfxI5glSud57o1FQ/export?format=pdf"
+          >Download Resume</a
+        >
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="mailto:robbiethewadley@gmail.com?subject=Your%20Website&body=Hey%20Robbie!%0D%0A%0D%0AJust%20saw%20your%20website%20and%20wanted%20to%20tell%20you%20it's%20awesome!%0D%0AKeep%20up%20the%20good%20work!"
+          >Email Me</a
+        >
+      </div>
+    </div>
+    <footer>
+      This site was built using pure CSS and HTML. No JS Required.
+    </footer>
+  </body>
+</html>

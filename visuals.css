@@ -1,0 +1,97 @@
+@keyframes float {
+  0% {
+    transform: translateY(-10px);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  100% {
+    transform: translateY(-10px);
+  }
+}
+
+img {
+  animation: float 10s infinite;
+}
+
+picture:nth-of-type(odd) img {
+  animation-delay: -2s;
+}
+
+.typing {
+  color: #0000;
+  background: linear-gradient(-90deg, var(--text-color) 1ch, #0000 0) 1ch 0,
+    linear-gradient(var(--text-color) 0 0) 0 0;
+  background-size: calc(var(--n) * 1ch) 200%;
+  -webkit-background-clip: padding-box, text;
+  background-clip: padding-box, text;
+  background-repeat: no-repeat;
+  animation: blink 0.5s infinite steps(1),
+    type calc(var(--n) * 0.02s) steps(var(--n)) forwards;
+}
+@keyframes type {
+  from {
+    background-size: 0 200%;
+  }
+}
+@keyframes blink {
+  50% {
+    background-position: 0 -100%, 0 0;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.hero .action,
+.scroll-invite {
+  animation: fade-in 1s 4s both;
+}
+
+@keyframes slide {
+  0% {
+    transform: translate(100px, 200px);
+  }
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+
+.pattern-container {
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.pattern {
+  position: absolute;
+  top: -200px;
+  left: -200px;
+  right: 0;
+  bottom: 0;
+  animation: slide 30s linear infinite;
+  background: linear-gradient(to right, #2a7189 1px, transparent 1px),
+    linear-gradient(to bottom, #b300b3 1px, transparent 1px);
+  background-size: 100px 100px;
+}
+
+h1 {
+  animation: glitch 60s ease infinite;
+}
+
+@media (prefers-reduced-motion) {
+  @keyframes float {
+  }
+  @keyframes slide {
+  }
+}

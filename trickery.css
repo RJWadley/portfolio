@@ -1,0 +1,120 @@
+/* crewmate pets filters */
+#typescript-check:checked ~ .crewmate-pets,
+#javascript-check:checked ~ .crewmate-pets,
+#jamstack-check:checked ~ .crewmate-pets,
+#canvas-check:checked ~ .crewmate-pets,
+#front-end-check:checked ~ .crewmate-pets,
+#react-check:checked ~ .crewmate-pets,
+
+/* job chart filters */
+#typescript-check:checked ~ .job-chart,
+#jamstack-check:checked ~ .job-chart,
+#canvas-check:checked ~ .job-chart,
+#react-check:checked ~ .job-chart,
+#python-check:checked ~ .job-chart,
+
+/* map builder filters */
+#javascript-check:checked ~ .map-builder,
+#front-end-check:checked ~ .map-builder,
+#python-check:checked ~ .map-builder,
+
+/* canvas toys filters */
+#typescript-check:checked ~ .canvas-toys,
+#jamstack-check:checked ~ .canvas-toys,
+#react-check:checked ~ .canvas-toys,
+#python-check:checked ~ .canvas-toys,
+
+/* rapid route filters */
+#javascript-check:checked ~ .rapidroute,
+#canvas-check:checked ~ .rapidroute,
+#front-end-check:checked ~ .rapidroute,
+#react-check:checked ~ .rapidroute,
+#python-check:checked ~ .rapidroute {
+  display: none;
+}
+
+/* no results */
+
+.no-results {
+  margin-top: 20px;
+  display: none;
+}
+
+/*js*/
+#javascript-check:checked ~ #typescript-check:checked ~ .no-results,
+#javascript-check:checked ~ #jamstack-check:checked ~ .no-results,
+#javascript-check:checked ~ #react-check:checked ~ .no-results,
+#javascript-check:checked ~ #typescript-check:checked ~ .no-results,
+/*ts*/
+#typescript-check:checked ~ #front-end-check:checked ~ .no-results,
+#typescript-check:checked ~ #python-check:checked ~ .no-results,
+/*jamstack*/
+#jamstack-check:checked ~ #front-end-check:checked ~ .no-results,
+#jamstack-check:checked ~ #python-check:checked ~ .no-results,
+/*canvas*/
+#canvas-check:checked ~ #python-check:checked ~ .no-results,
+/*react*/
+#react-check:checked ~ #front-end-check:checked ~ .no-results,
+#react-check:checked ~ #python-check:checked ~ .no-results,
+/*front*/
+#front-end-check:checked ~ #python-check:checked ~ .no-results {
+  display: block;
+}
+
+.filter-label {
+  background-color: #6366f1;
+  color: black;
+  font-weight: bold;
+  display: inline-flex;
+  height: 30px;
+  padding: 5px 10px;
+  align-items: center;
+  border-radius: var(--border-radius);
+}
+
+.checkbox {
+  position: absolute;
+  height: 0;
+  width: 0;
+  opacity: 0;
+}
+
+label {
+  font-size: 18px;
+  padding: 5px 10px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--border-radius);
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+input + label span {
+  display: inline-block;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border: 1px solid white;
+  border-radius: 3px;
+  margin: 0;
+  margin-left: 10px;
+}
+
+input:checked + label span:before {
+  display: block;
+}
+input + label span:before {
+  content: "";
+  display: none;
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
