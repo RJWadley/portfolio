@@ -95,7 +95,7 @@ input + label span {
   position: relative;
   width: 20px;
   height: 20px;
-  border: 1px solid white;
+  border: 1px solid black;
   border-radius: 3px;
   margin: 0;
   margin-left: 10px;
@@ -112,7 +112,7 @@ input + label span:before {
   top: 2px;
   width: 5px;
   height: 10px;
-  border: solid white;
+  border: solid black;
   border-width: 0 3px 3px 0;
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);

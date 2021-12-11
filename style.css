@@ -123,7 +123,6 @@ a:focus {
   padding: 10px;
   list-style: none;
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -131,6 +130,7 @@ a:focus {
   padding: 10px;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
+  margin: 5px;
 }
 
 img {
