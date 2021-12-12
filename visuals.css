@@ -28,7 +28,11 @@ picture:nth-of-type(odd) img {
   background-repeat: no-repeat;
   animation: blink 0.5s infinite steps(1),
     type calc(var(--n) * 0.02s) steps(var(--n)) forwards;
+  animation-fill-mode: both;
+  animation-delay: var(--d);
+  white-space: nowrap;
 }
+
 @keyframes type {
   from {
     background-size: 0 200%;
