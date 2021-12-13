@@ -139,6 +139,7 @@ img {
   border-radius: var(--border-radius);
   position: relative;
   box-shadow: var(--box-shadow);
+  border: 1px solid gray;
 }
 
 picture:nth-child(1) img {
