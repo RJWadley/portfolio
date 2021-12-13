@@ -1,5 +1,15 @@
 /* css only filtering */
-/* is this practical? not really. is it kinda cool? yeah */
+/* is this practical? no. is it kinda cool? yeah */
+
+/* was it fun to make? yeah. will it be fun to maintain? hmmmmm */
+
+/* crewmate pets filters */
+#typescript-check:checked ~ .crewmate-pets,
+#javascript-check:checked ~ .crewmate-pets,
+#jamstack-check:checked ~ .crewmate-pets,
+#canvas-check:checked ~ .crewmate-pets,
+#front-end-check:checked ~ .crewmate-pets,
+#react-check:checked ~ .crewmate-pets,
 
 /* crewmate pets filters */
 #typescript-check:checked ~ .crewmate-pets,
@@ -35,6 +45,14 @@
 #python-check:checked ~ .rapidroute {
   display: none;
 }
+
+/* robotics filters */
+#typescript-check:checked ~ .robotics,
+#javascript-check:checked ~ .robotics,
+#jamstack-check:checked ~ .robotics,
+#canvas-check:checked ~ .robotics,
+#python-check:checked ~ .robotics,
+#react-check:checked ~ .robotics,
 
 /* no results */
 
