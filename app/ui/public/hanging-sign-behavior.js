@@ -563,10 +563,17 @@ function mountAnimated(signal) {
         kick();
       }
     });
+    // Mobile browser chrome changes the viewport height on nearly every scroll.
+    // Only a width change can move the rig, so height-only resizes keep the
+    // sign where it is and just update the visible area.
+    let setupWidth = innerWidth;
     scope.listen(window, "resize", () => {
       if (!ends) return;
+      viewportHeight = innerHeight;
+      if (innerWidth === setupWidth) return;
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
+        setupWidth = innerWidth;
         setup();
         kick();
       }, 150);
