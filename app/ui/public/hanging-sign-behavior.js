@@ -40,12 +40,48 @@ function mountAnimated(signal) {
     );
     const SEGMENTS = 9,
       ROPE_W = 4.2;
-    // Tape-measure reels: rope never stretches; it pays out while you pull and winds back when released.
+    // Each operator works in fixed 60 Hz steps; rope motion feeds the existing tether impulses.
     const GRAVITY = 0.42,
       DAMPING = 0.985,
       BOUNCE = 0.6,
-      REEL_ACCEL = 0.75,
       REEL_MAX = 34;
+    const CREW = {
+      payoutAccel: 0.65, // px/step², including braking into the final length
+      payoutResponse: 0.16,
+      feedPace: [0.45, 1.35],
+      feedSmoothing: 0.08,
+      feedChange: [18, 48], // steps between independent changes of pace
+      pullSteps: [8, 14],
+      restSteps: [7, 17],
+      pullSize: [7, 15], // px; longer backlogs increase the size and shorten rests
+      invertedCosine: -0.35, // board points over 110° away from upright
+      rescuePull: [1.4, 1.8], // multiples of the distance between the board’s holes
+      rescueRest: [50, 85],
+      rescueBeat: 42, // near-rest steps before noticing an inverted board
+      rescueAttempts: 5,
+      rescueCooldown: 8000, // one owned timer, with no animation during the break
+    };
+    const verify = new URLSearchParams(location.search).has("verify");
+    let seed = Number(new URLSearchParams(location.search).get("signSeed")) || 0x51c0ffee;
+    const random = verify
+      ? () => {
+          seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
+          return seed / 4294967296;
+        }
+      : Math.random;
+    const between = ([min, max]) => min + random() * (max - min);
+    const operator = () => ({
+      feed: 1,
+      pace: 1,
+      change: 0,
+      payout: 0,
+      pull: 0,
+      duration: 0,
+      size: 0,
+      wait: Math.floor(between(CREW.restSteps)),
+      tugs: 0,
+    });
+    let crew, rescue, rescueTimer;
     let W,
       holeX,
       holeY,
@@ -91,6 +127,17 @@ function mountAnimated(signal) {
       ropeLen = baseRopeLen + pageScroll;
       lengths = [ropeLen, ropeLen];
       reel = [0, 0];
+      crew = [operator(), operator()];
+      rescue = {
+        quiet: 0,
+        attempts: 0,
+        tugs: 0,
+        side: random() < 0.5 ? 0 : 1,
+        wait: 0,
+        offsets: [0, 0],
+        cooling: false,
+      };
+      clearTimeout(rescueTimer);
       squash = 0;
       bar = W - holeX * 2;
       rig.style.width = `${W}px`;
@@ -135,6 +182,28 @@ function mountAnimated(signal) {
         reel,
         pageScroll,
         scope,
+        crew,
+        rescue,
+        ...(verify
+          ? { verify: {
+              constants: CREW,
+              wake: kick,
+              // Replay the actual fixed solver without wall-clock/frame batching noise.
+              advance(steps = 1) {
+                scope.cancelAnimationFrame(frameId);
+                frameId = last = acc = 0;
+                pendingScroll = Math.max(0, scrollY);
+                followScroll();
+                let active;
+                for (let n = 0; n < steps; n++) {
+                  active = simulate();
+                  if (!active) break;
+                }
+                render();
+                return active;
+              },
+            } }
+          : {}),
         running: frameId !== 0,
       });
       window.__portfolioSign = signState;
@@ -194,32 +263,122 @@ function mountAnimated(signal) {
     const reboundLimit = () =>
       Math.sqrt(2 * GRAVITY * Math.min(120, viewportHeight * 0.2));
 
+    function stepOperator(i, target) {
+      const c = crew[i],
+        gap = target - lengths[i];
+      if (gap > 0.01) {
+        c.pull = 0;
+        if (--c.change <= 0) {
+          c.pace = between(CREW.feedPace);
+          c.change = Math.floor(between(CREW.feedChange));
+        }
+        c.feed += (c.pace - c.feed) * CREW.feedSmoothing;
+        // Brake early enough to reach the target without a hard length clamp.
+        const speed = Math.min(
+          REEL_MAX,
+          gap * CREW.payoutResponse * c.feed,
+          (Math.sqrt(CREW.payoutAccel ** 2 + 8 * CREW.payoutAccel * gap) -
+            CREW.payoutAccel) / 2,
+        );
+        c.payout += clamp(speed - c.payout, -CREW.payoutAccel, CREW.payoutAccel);
+        const feed = Math.min(gap, c.payout);
+        lengths[i] += feed;
+        reel[i] = -feed;
+        return false;
+      }
+      c.payout = 0;
+      if (gap >= -0.01) {
+        lengths[i] = target;
+        reel[i] = 0;
+        c.pull = 0;
+        return false;
+      }
+      if (!c.pull && --c.wait <= 0) {
+        c.duration = Math.round(between(CREW.pullSteps));
+        if (rescue.offsets[i])
+          c.duration = Math.max(c.duration, Math.ceil(-gap * 2 / REEL_MAX));
+        const hurry = Math.min(1, -gap / 400);
+        c.size = Math.min(
+          -gap,
+          rescue.offsets[i] ? -gap : between(CREW.pullSize) + -gap * 0.22,
+          REEL_MAX * c.duration / 2,
+        );
+        c.wait = Math.round(between(CREW.restSteps) * (1 - hurry * 0.6));
+        c.pull = c.duration;
+        c.tugs++;
+      }
+      reel[i] = 0;
+      if (!c.pull) return false;
+      // A raised-cosine pull starts and ends at zero speed. The tether transfers
+      // this rope velocity to the board rather than moving its pose directly.
+      const phase = c.duration - c.pull--;
+      const pulled = c.size *
+        (Math.cos(Math.PI * phase / c.duration) -
+          Math.cos(Math.PI * (phase + 1) / c.duration)) / 2;
+      reel[i] = Math.min(-gap, pulled);
+      lengths[i] -= reel[i];
+      if (target !== ropeLen || lengths[i] > target + 0.01) return false;
+      lengths[i] = target;
+      c.pull = 0;
+      return true;
+    }
+
+    function stepRescue(motion) {
+      const inverted = (ends[1].x - ends[0].x) / bar < CREW.invertedCosine;
+      const atTarget = lengths.every((l) => Math.abs(l - ropeLen) < 0.1);
+      if (grab || !inverted) {
+        if (rescue.cooling) clearTimeout(rescueTimer);
+        rescue.cooling = false;
+        rescue.quiet = 0;
+        // Passing upright during a spin is not a successful rescue yet.
+        if (grab || (atTarget && motion < 0.15 && ends[1].x - ends[0].x > bar * 0.85))
+          rescue.attempts = 0;
+        rescue.offsets.fill(0);
+        return;
+      }
+      if (rescue.cooling) return;
+      if (rescue.wait > 0) {
+        rescue.wait--;
+        return;
+      }
+      if (!atTarget || motion > 0.15) {
+        rescue.quiet = 0;
+        return;
+      }
+      if (++rescue.quiet < CREW.rescueBeat) return;
+      rescue.quiet = 0;
+      if (rescue.attempts >= CREW.rescueAttempts) {
+        rescue.cooling = true;
+        rescueTimer = setTimeout(() => {
+          rescue.cooling = false;
+          rescue.attempts = 0;
+          kick();
+        }, CREW.rescueCooldown);
+        return;
+      }
+      // One operator gives a stronger pull, then eases that rope back out.
+      // Alternate hands with uneven strength so a symmetric crossed rig can escape.
+      const i = rescue.side;
+      rescue.side = 1 - i;
+      rescue.attempts++;
+      rescue.tugs++;
+      rescue.offsets[i] = Math.min(ropeLen * 0.8, bar * between(CREW.rescuePull));
+      rescue.wait = Math.floor(between(CREW.rescueRest));
+    }
+
     function stepSign() {
       let clunks = 0;
-      // Reels: while held they pay out freely (and take up slack); released, they wind in, faster and faster.
       for (let i = 0; i < 2; i++) {
-        const d = Math.hypot(
-          ends[i].x - anchors[i].x,
-          ends[i].y - anchors[i].y,
-        );
+        const d = Math.hypot(ends[i].x - anchors[i].x, ends[i].y - anchors[i].y);
         if (grab) {
           lengths[i] = Math.max(ropeLen, d);
           reel[i] = 0;
+          crew[i].pull = crew[i].payout = 0;
           continue;
         }
-        if (lengths[i] <= ropeLen) {
-          // Free payout lets the board fall. No position/history correction accompanies it.
-          lengths[i] = ropeLen;
-          reel[i] = 0;
-        }
-        if (lengths[i] > ropeLen) {
-          reel[i] = Math.min(REEL_MAX, reel[i] + REEL_ACCEL);
-          lengths[i] = Math.max(ropeLen, lengths[i] - reel[i]);
-          if (lengths[i] === ropeLen) {
-            reel[i] = 0;
-            clunks |= 1 << i;
-          }
-        }
+        const target = ropeLen - rescue.offsets[i];
+        if (stepOperator(i, target)) clunks |= 1 << i;
+        if (rescue.offsets[i] && lengths[i] <= target + 0.1) rescue.offsets[i] = 0;
       }
       for (let i = 0; i < ends.length; i++) {
         const e = ends[i],
@@ -322,16 +481,22 @@ function mountAnimated(signal) {
         const p = previous[index++];
         motion = Math.max(motion, Math.hypot(e.x - p.x, e.y - p.y));
       }
+      const boardMotion = motion;
       for (const nodes of chains)
         for (const e of nodes) {
           const p = previous[index++];
           motion = Math.max(motion, Math.hypot(e.x - p.x, e.y - p.y));
         }
+      stepRescue(boardMotion);
+      const inverted = (ends[1].x - ends[0].x) / bar < CREW.invertedCosine;
+      // An inverted equilibrium may sleep through its retry cooldown, but must
+      // never be snapped upright by the ordinary final-pose sleep correction.
+      if (inverted && rescue.cooling && motion < 0.15) return false;
       const away =
         ends.some(
           (e, i) => Math.abs(e.x - rest[i].x) + Math.abs(e.y - rest[i].y) > 3,
         ) ||
-        lengths.some((l) => l > ropeLen + 0.05) ||
+        lengths.some((l) => Math.abs(l - ropeLen) > 0.05) ||
         squash > 0.002;
       quietSteps = grab || motion > 0.15 || away ? 0 : quietSteps + 1;
       if (quietSteps < 30) return true;
@@ -563,10 +728,17 @@ function mountAnimated(signal) {
         kick();
       }
     });
+    // Mobile browser chrome changes the viewport height on nearly every scroll.
+    // Only a width change can move the rig, so height-only resizes keep the
+    // sign where it is and just update the visible area.
+    let setupWidth = innerWidth;
     scope.listen(window, "resize", () => {
       if (!ends) return;
+      viewportHeight = innerHeight;
+      if (innerWidth === setupWidth) return;
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
+        setupWidth = innerWidth;
         setup();
         kick();
       }, 150);
