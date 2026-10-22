@@ -28,6 +28,7 @@ async function record(page: Page) {
     };
     (window as any).__frameRecord = state;
     let previousSolver: number | null = null, previouslyChanging = false;
+    let completedFrame: { at: number; ms: number; scene: string } | null = null;
     const tick = (now: number) => {
       // Keep cold hydration/font/model/body creation visible as startup. The
       // actual drop starts at the first frame containing the 18 live bodies.
@@ -48,23 +49,21 @@ async function record(page: Page) {
         const held=p.letters().find((l:any)=>l.held);if(held){state.evidence.heldFrames++;if(p.ball())state.evidence.touchBallFrames++;state.evidence.heldStart??={...held.body.position};state.evidence.maxHeldDistance=Math.max(state.evidence.maxHeldDistance,Math.hypot(held.body.position.x-state.evidence.heldStart.x,held.body.position.y-state.evidence.heldStart.y));}
       }
       if(p&&state.scene==='burst'){state.evidence.mouseBallResumed ||= !!p.ball();if(p.letters().some((l:any)=>l.axisBurstStage>=0))state.evidence.burstFrames++;}
-      const interval = state.previous ? now - state.previous : 0,
-        endingScene = state.scene;
-      // Observe after the complete rAF batch, including the engine and drawing.
-      // Real 60Hz cadence must not be hidden by the virtual-clock resampling
-      // used by the independent raster jitter suite.
-      setTimeout(() => {
-        const physics = (window as any).__portfolioPhysics;
-        if (physics?.letters().length !== 18) return;
-        const solver = physics.engine.timing.timestamp,
-          changing = physics.letters().some((l: any) => l.hull &&
+      // This observer is registered before the application. Read the previous
+      // completed rAF batch at the start of the next one, and retain its label.
+      // Chromium can defer timers for ~100ms during touch input: setTimeout(0)
+      // would then read several ticks at once and fabricate a grab-time stall.
+      if (p?.letters().length === 18) {
+        const solver = p.engine.timing.timestamp,
+          changing = p.letters().some((l: any) => l.hull &&
             Math.abs((l.hull.requestedPose?.width ?? l.hull.pose.width) - l.hull.pose.width) > 1);
-        if (previousSolver !== null) state.cadence.push({ at: now, ms: interval,
-          ticks: Math.round((solver - previousSolver) / (1000 / 60)),
-          changing: previouslyChanging && changing, scene: endingScene });
+        if (previousSolver !== null && completedFrame) state.cadence.push({
+          ...completedFrame, ticks: Math.round((solver - previousSolver) / (1000 / 60)),
+          changing: previouslyChanging && changing });
         previousSolver = solver;
         previouslyChanging = changing;
-      }, 0);
+      }
+      completedFrame = { at: now, ms: state.previous ? now - state.previous : 0, scene: state.scene };
       if (state.previous)
         state.frames.push({
           scene: state.scene,
@@ -127,7 +126,7 @@ export async function runScenes(page: Page, cdp: CDPSession, url: string) {
   const hit = await page.evaluate(({ x, y }) => {
     const el = document.elementFromPoint(x, y);
     document.addEventListener("pointerdown", e => {
-      (window as any).__frameRecord.evidence.dragPointerDown = { x: e.clientX, y: e.clientY,
+      (window as any).__frameRecord.evidence.dragPointerDown = { at: performance.now(), x: e.clientX, y: e.clientY,
         target: (e.target as Element).outerHTML.slice(0, 600) };
     }, { once: true });
     return el?.outerHTML.slice(0, 600);
@@ -320,13 +319,9 @@ export async function verifyFrames(
         "Real-clock cadence observes enough changing letter frames");
       for (const s of r.scenes) {
         if (s.scene === "startup") continue;
-        // KNOWN ISSUE: grabbing a letter bunches ~7 solver ticks into one frame
-        // and then holds for ~7 frames (a ~0.1s stutter at the grab). Reported,
-        // not gated, until it's fixed; every other scene stays strict.
-        if (s.scene === "drag" && s.cadence.eligibleFrames >= 30) {
-          if (s.cadence.holds / s.cadence.eligibleFrames > .01 || s.cadence.doubles / s.cadence.eligibleFrames > .01)
-            console.warn(`KNOWN ISSUE grab stutter: ${r.page} drag ${JSON.stringify(s.cadence)}`);
-        } else if (s.cadence.eligibleFrames >= 30) {
+        if (s.scene === "drag") assert.ok(s.cadence.eligibleFrames >= 30,
+          `Enough changing drag frames: ${r.page} ${JSON.stringify(s.cadence)}`);
+        if (s.cadence.eligibleFrames >= 30) {
           assert.ok(s.cadence.holds / s.cadence.eligibleFrames <= .01,
             `Changing glyphs do not hold on nominal 60Hz frames: ${r.page} ${s.scene} ${JSON.stringify(s.cadence)}`);
           assert.ok(s.cadence.doubles / s.cadence.eligibleFrames <= .01,

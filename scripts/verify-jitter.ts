@@ -25,14 +25,20 @@ function energy(v: number[]) {
   return { secondDifferenceRms: rms(raw), smoothedSecondDifferenceRms: rms(lowD2), highPassRms: rms(residual), reversalsPerSecond: reversals / Math.max(frameMs, (v.length - 1) * frameMs) * 1000 };
 }
 
-async function installSampler(page: Page) {
+export async function installSampler(page: Page) {
   const source = "data:text/javascript;base64," + Buffer.from(await readFile("app/ui/public/glyph-iou.js", "utf8")).toString("base64");
   await page.evaluate(async (source) => {
     const { createGlyphOracle } = await import(source);
     const oracle = await createGlyphOracle(undefined, 2);
-    const w = window as any, state = w.__glyphJitter = { scene: "drop-impact", sceneAt: performance.now(), samples: [] as any[], stopped: false };
-    function sample() {
-      if (state.stopped) return;
+    const w = window as any, state = w.__glyphJitter = {
+      scene: "drop-impact", sceneAt: performance.now(), samples: [] as any[], stopped: false,
+      frame: null as { at: number; scene: string; sceneAt: number } | null, sampledAt: null as number | null,
+      capture: () => {},
+    };
+    state.capture = () => {
+      const frame = state.frame;
+      if (state.stopped || !frame || frame.at === state.sampledAt) return;
+      state.sampledAt = frame.at;
       const p = w.__portfolioPhysics;
       if (p?.letters().length === 18) {
         const rows = p.letters().filter((l: any) => l.glyph).map((l: any) => {
@@ -50,12 +56,39 @@ async function installSampler(page: Page) {
             angle: Math.atan2(rigid.b, rigid.a), bodyAngle: l.body.angle, glyphTransform: measured.transform, pose: { ...pose }, requested: { ...(h.requestedPose ?? pose) },
             anchorError: Math.hypot(measured.centroidDelta.x, measured.centroidDelta.y), puffTarget: l.proximityTarget, puffValue: l.axes.puff.value, body: { ...l.body.position }, held: !!l.held };
         });
-        state.samples.push({ at: performance.now(), solver: p.engine.timing.timestamp, scene: state.scene, sceneAt: state.sceneAt, rows });
+        state.samples.push({ ...frame, solver: p.engine.timing.timestamp, rows });
       }
-      requestAnimationFrame(() => setTimeout(sample, 0));
+    };
+    // Stamp the frame only. Raster reads happen from Node after clock.runFor
+    // completes the entire callback batch, including a newly woken engine.
+    function stampFrame(now: number) {
+      if (state.stopped) return;
+      state.frame = { at: now, scene: state.scene, sceneAt: state.sceneAt };
+      requestAnimationFrame(stampFrame);
     }
-    requestAnimationFrame(() => setTimeout(sample, 0));
+    requestAnimationFrame(stampFrame);
   }, source);
+}
+
+export async function runJitterFor(page: Page, ms: number) {
+  // Playwright's controlled rAF runs every 16ms. Land on each frame boundary,
+  // including after partial advances, and read only after its callbacks finish.
+  // This uses neither timer tasks nor relative rAF registration order.
+  let remaining = ms, untilFrame = await page.evaluate(() => {
+    const frame = (window as any).__glyphJitter.frame;
+    return frame ? frame.at + 16 - performance.now() : 1;
+  });
+  while (remaining > 0) {
+    assert.ok(untilFrame > 0 && untilFrame <= 16, "The jitter clock reaches the next frame exactly");
+    const step = Math.min(remaining, untilFrame);
+    await page.clock.runFor(step);
+    remaining -= step;
+    untilFrame = await page.evaluate(() => {
+      const state = (window as any).__glyphJitter;
+      state.capture();
+      return state.frame ? state.frame.at + 16 - performance.now() : 1;
+    });
+  }
 }
 
 export function summarizeJitter(samples: any[]) {
@@ -129,12 +162,12 @@ export async function verifyJitter(browser: Browser, url: string, { label = "aft
       const start = new Date("2026-10-15T00:00:00Z");
       await page.clock.install({ time: start }); await page.clock.pauseAt(new Date(+start + 1000));
       await page.goto(url + "/?verify"); await waitForPhysicsFontReady(page);
-      await installSampler(page); await page.clock.runFor(3000);
+      await installSampler(page); await runJitterFor(page, 3000);
       const scene = (s: string) => page.evaluate(s => { const state = (window as any).__glyphJitter; state.scene = s; state.sceneAt = performance.now(); }, s);
       await scene("proximity");
       const point = await page.evaluate(() => { const l = (window as any).__portfolioPhysics.letters()[2]; return { x: l.ox, y: l.oy - parseFloat(getComputedStyle(l.el).fontSize) * .75 }; });
-      await page.mouse.move(point.x, point.y); await page.clock.runFor(1200);
-      await scene("proximity-return"); await page.mouse.move(width - 5, 5); await page.clock.runFor(2200);
+      await page.mouse.move(point.x, point.y); await runJitterFor(page, 1200);
+      await scene("proximity-return"); await page.mouse.move(width - 5, 5); await runJitterFor(page, 2200);
       await scene("grab-drag");
       const held = await page.evaluate(() => { const l = (window as any).__portfolioPhysics.letters()[11]; return { x: l.body.position.x, y: l.body.position.y, size: parseFloat(getComputedStyle(l.el).fontSize) }; });
       const cdp = await context.newCDPSession(page);
@@ -142,13 +175,13 @@ export async function verifyJitter(browser: Browser, url: string, { label = "aft
       assert.equal(await page.locator(".char.is-held").count(), 1, "Jitter drag holds a real glyph");
       for (let i = 1; i <= 32; i++) {
         await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: held.x + Math.sin(i * Math.PI / 16) * held.size * .25, y: held.y - held.size * .8 * Math.min(1, i / 8) }] });
-        await page.clock.runFor(32);
+        await runJitterFor(page, 32);
       }
       await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
-      await scene("return-home"); await page.clock.runFor(3500);
+      await scene("return-home"); await runJitterFor(page, 3500);
       await scene("burst");
       await page.evaluate(() => document.dispatchEvent(new MouseEvent("click", { clientX: -300, clientY: 0, detail: 1, bubbles: true })));
-      await page.clock.runFor(2200);
+      await runJitterFor(page, 2200);
       const samples = await page.evaluate(() => { const s = (window as any).__glyphJitter; s.stopped = true; return s.samples; });
       assert.ok(samples.filter((f: any) => f.scene === "grab-drag" && f.rows.some((l: any) => l.held)).length > 20, "Jitter scene samples the held glyph throughout the native drag");
       await writeFile(`.verify/jitter-${label}/frames-${width}.json`, JSON.stringify(samples));
@@ -186,21 +219,20 @@ export async function verifyJitter(browser: Browser, url: string, { label = "aft
       results.push({ width, scenes: summarizeJitter(samples) });
     } finally { await context.close(); }
   }
-  await writeFile(`.verify/jitter-${label}.json`, JSON.stringify({ resolution: "Post-rAF actual DOM glyph (SVG contour or native font) alpha >=0.5 at 2 raster px/CSS px (DPR1), actual DOM axes/transforms; alpha-mask centroid/bounds per rAF, resampled at 60 Hz; morphology in CSS pixels after removing rigid body position/rotation", results }, null, 2));
-  if (enforce) for (const viewport of results) for (const scene of viewport.scenes) {
+  await writeFile(`.verify/jitter-${label}.json`, JSON.stringify({ resolution: "After each completed controlled rAF batch: actual DOM glyph (SVG contour or native font) alpha >=0.5 at 2 raster px/CSS px (DPR1), actual DOM axes/transforms; alpha-mask centroid/bounds per rAF, resampled at 60 Hz; morphology in CSS pixels after removing rigid body position/rotation", results }, null, 2));
+  if (enforce) assertJitter(results);
+  return results;
+}
+
+export function assertJitter(results: { width: number; scenes: ReturnType<typeof summarizeJitter> }[]) {
+  for (const viewport of results) for (const scene of viewport.scenes) {
     // Gate full on-screen motion too: contact-induced body twitch must not be
     // hidden by subtracting the rigid pose. Drop/drag retain the baseline's
     // intentional collision/input edges; standing morphs have a subpixel budget.
     const screenBudgets: Record<string, number> = { "drop-impact": 1.5, "grab-drag": 1.25, "proximity": .1,
       "proximity-return": .1, "return-home": .2, "burst": .15 };
     const screenBudget = screenBudgets[scene.scene]!;
-    // KNOWN ISSUE: the grab stutter (see verify-frames.ts) makes whole-screen
-    // drag motion vary run to run (1.23–1.42 observed). Reported, not gated.
-    if (scene.scene === "grab-drag") {
-      if (scene.screenHighPassRms > screenBudget)
-        console.warn(`KNOWN ISSUE grab stutter: whole-screen drag RMS ${viewport.width} ${scene.screenHighPassRms}/${screenBudget}`);
-    } else
-      assert.ok(scene.screenHighPassRms <= screenBudget, `Whole-screen centroid high-pass RMS: ${viewport.width}/${scene.scene} ${scene.screenHighPassRms}/${screenBudget}`);
+    assert.ok(scene.screenHighPassRms <= screenBudget, `Whole-screen centroid high-pass RMS: ${viewport.width}/${scene.scene} ${scene.screenHighPassRms}/${screenBudget}`);
     if (scene.scene === "burst" || scene.scene.startsWith("proximity"))
       assert.ok(scene.maxLetterScreenHighPassRms <= .35, `Every standing morph has subpixel screen jitter: ${viewport.width}/${scene.scene}`);
     assert.equal(scene.axisReversals, 0, `No axis reverses away from a monotonic requested transition: ${viewport.width}/${scene.scene}`);
@@ -208,7 +240,6 @@ export async function verifyJitter(browser: Browser, url: string, { label = "aft
     assert.ok(scene.maxLetterMorphRms <= .75, `Every glyph morph centroid RMS <= .75 CSS px/frame²: ${viewport.width}/${scene.scene} ${scene.maxLetterMorphRms}`);
     assert.ok(scene.morphCentroidRms <= .35, `Morph centroid second-difference RMS <= .35 CSS px/frame²: ${viewport.width}/${scene.scene} ${scene.morphCentroidRms}`);
   }
-  return results;
 }
 if (import.meta.main) {
   const preview = await startPreview({ directory: process.env.JITTER_DIRECTORY }), browser = await chromium.launch();
