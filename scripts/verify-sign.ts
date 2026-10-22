@@ -106,6 +106,181 @@ async function scrollSequence(page: Page) {
   return frames;
 }
 
+// Construct the crossed-rope equilibrium through the existing diagnostic pose,
+// then let the production solver notice and recover it (no rescue-only action).
+async function invert(page: Page) {
+  await page.evaluate(() => {
+    const s = (window as any).__portfolioSign();
+    const [a, b] = s.ends;
+    const bar = Math.hypot(b.x - a.x, b.y - a.y);
+    const mid = (a.x + b.x) / 2;
+    const y = Math.sqrt(s.ropeLen ** 2 - bar ** 2);
+    Object.assign(a, { x: mid + bar / 2, ox: mid + bar / 2, y, oy: y });
+    Object.assign(b, { x: mid - bar / 2, ox: mid - bar / 2, y, oy: y });
+  });
+}
+
+export async function verifyCrew(browser: Browser, url: string) {
+  const reports = [];
+  await mkdir(".verify/sign-crew", { recursive: true });
+  for (const width of [390, 1440]) {
+    const context = await browser.newContext({
+      viewport: { width, height: 900 },
+      recordVideo: { dir: ".verify/sign-crew", size: { width, height: 900 } },
+    });
+    const page = await context.newPage();
+    const video = page.video()!;
+    try {
+      await page.goto(url + "?verify&signSeed=137");
+      await page.waitForFunction(() => !!(window as any).__portfolioSign);
+      await asleep(page);
+      const replay = await page.evaluate(() => {
+        const samples = [];
+        for (let step = 0; step < 420; step++) {
+          if (step < 180) scrollTo({ top: step * 6, behavior: "instant" });
+          const active = (window as any).__portfolioSign().verify.advance();
+          const s = (window as any).__portfolioSign();
+          samples.push({ step, lengths: s.lengths.slice() as number[], target: s.ropeLen as number,
+            speeds: s.reel.map((v: number) => -v) as number[],
+            y: (s.ends[0].y + s.ends[1].y) / 2 - scrollY, active });
+        }
+        const hoist = [];
+        for (let step = 0; step < 600; step++) {
+          if (step < 180) scrollTo({ top: 1074 - step * 4, behavior: "instant" });
+          const active = (window as any).__portfolioSign().verify.advance();
+          const s = (window as any).__portfolioSign();
+          hoist.push({ step, lengths: s.lengths.slice() as number[], speeds: s.reel.slice() as number[],
+            target: s.ropeLen as number, active });
+          if (step > 180 && !active) break;
+        }
+        return { samples, hoist };
+      });
+      const speeds = replay.samples.flatMap((s) => s.speeds);
+      const maxAcceleration = Math.max(...replay.samples.slice(1).flatMap((s, n) =>
+        s.speeds.map((v, i) => Math.abs(v - replay.samples[n]!.speeds[i]!))));
+      const maxLag = Math.max(...replay.samples.map((s) => s.target - Math.min(...s.lengths)));
+      assert.ok(Math.min(...speeds) >= 0 && Math.max(...speeds) <= 34, "Payout speed stays bounded");
+      assert.ok(maxAcceleration <= 0.66, `Payout never jerks: ${maxAcceleration}`);
+      assert.ok(maxLag < 100, `Continuous payout has bounded lag: ${maxLag}`);
+      assert.ok(replay.samples.every((s) => s.y > -120 && s.y < 200), "Payout keeps the board near the viewport top");
+      assert.ok(replay.samples.filter((s) => Math.abs(s.speeds[0]! - s.speeds[1]!) > 0.25).length > 60,
+        "Operators feed at different rates over time");
+      const starts = [0, 1].map((i) => replay.hoist.filter((s, n, all) =>
+        s.speeds[i]! > 0.01 && (n === 0 || all[n - 1]!.speeds[i]! <= 0.01)).map((s) => s.step));
+      for (let i = 0; i < 2; i++) {
+        assert.ok(starts[i]!.length >= 8, "Each hoist contains many distinct pulls");
+        const rests = replay.hoist.filter((s, n, all) => n > 0 && s.speeds[i] === 0 &&
+          all[n - 1]!.speeds[i] === 0 && s.lengths[i]! > s.target + 1);
+        assert.ok(rests.length >= 20, "Pulls have real rests while rope remains to wind in");
+      }
+      assert.ok(starts[0]!.filter((n) => !starts[1]!.includes(n)).length >= 5,
+        "Left and right pulls are independently timed");
+      assert.ok(replay.hoist.at(-1)!.lengths.every((l) => Math.abs(l - replay.hoist.at(-1)!.target) < 0.1),
+        "Hoisting catches up to the final target");
+      await page.evaluate(() => (window as any).__portfolioSign().verify.wake());
+      await asleep(page);
+
+      // Height-only browser-chrome resize must retain pose arrays and operator state.
+      await page.evaluate(() => { (window as any).__crewBeforeResize = (window as any).__portfolioSign(); });
+      await page.setViewportSize({ width, height: 844 });
+      await page.waitForTimeout(200);
+      assert.ok(await page.evaluate(() => {
+        const before = (window as any).__crewBeforeResize, after = (window as any).__portfolioSign();
+        return before.ends === after.ends && before.crew === after.crew && !after.running;
+      }), "Height-only resizing leaves the sleeping rig intact");
+
+      // Recorded scenes run the same fixed solver at real-time cadence. Cropped
+      // frames show the sign clearly on desktop as well as in the full video.
+      const frames: { scene: string; step: number; path: string }[] = [];
+      const capture = async (scene: string, step: number) => {
+        const path = `.verify/sign-crew/${width}-${scene}-${String(step).padStart(3, "0")}.png`;
+        await page.screenshot({ path, clip: { x: Math.max(0, width - 400), y: 0, width: Math.min(width, 400), height: 300 } });
+        frames.push({ scene, step, path });
+      };
+      await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+      await asleep(page);
+      for (const scene of ["payout", "hoist"]) {
+        for (let step = 0; step <= 120; step += 6) {
+          await page.evaluate(async ({ scene, step }) => {
+            for (let n = 0; n < 6; n++) {
+              await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+              const progress = Math.min(120, step + n) * 5;
+              scrollTo({ top: scene === "payout" ? progress : 600 - progress, behavior: "instant" });
+              (window as any).__portfolioSign().verify.advance();
+            }
+          }, { scene, step });
+          if (step % 12 === 0) await capture(scene, step);
+        }
+        await page.evaluate(() => (window as any).__portfolioSign().verify.wake());
+        await asleep(page);
+      }
+      await page.evaluate(() => scrollTo({ top: 900, behavior: "instant" }));
+      await asleep(page);
+      await invert(page);
+      const rescue = [];
+      let finished = false;
+      for (let step = 0; step <= 1800; step += 6) {
+        const sample = await page.evaluate(async () => {
+          let active = true;
+          for (let n = 0; n < 6; n++) {
+            await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+            active = (window as any).__portfolioSign().verify.advance();
+            if (!active) break;
+          }
+          const s = (window as any).__portfolioSign(), [a, b] = s.ends;
+          return { active, angle: Math.atan2(b.y - a.y, b.x - a.x), tugs: s.rescue.tugs,
+            attempts: s.rescue.attempts, lengths: s.lengths.slice() as number[] };
+        });
+        rescue.push({ step, ...sample });
+        if (step % 24 === 0) await capture("rescue", step);
+        if (!sample.active) { finished = true; break; }
+      }
+      assert.ok(finished, "An inverted equilibrium recovers and sleeps within 30 simulated seconds");
+      assert.ok(rescue.some((s) => s.step <= 900 && Math.abs(s.angle) < 0.1),
+        "Rescue flips upright within 15 simulated seconds");
+      assert.ok(Math.abs(rescue.at(-1)!.angle) < 0.05, "Rescue leaves the board upright");
+      const rescueTugs = rescue.at(-1)!.tugs;
+      assert.ok(rescueTugs >= 1 && rescueTugs <= 5, `Rescue uses a bounded number of pulls: ${rescueTugs}`);
+      assert.ok(rescue.filter((s) => s.tugs === 0).length >= 5, "Crew waits a beat before rescue");
+      await page.evaluate(() => (window as any).__portfolioSign().verify.wake());
+      await asleep(page);
+      const sleeping = await page.evaluate(async () => {
+        const s = (window as any).__portfolioSign();
+        let writes = 0;
+        const observer = new MutationObserver((records) => { writes += records.length; });
+        observer.observe(s.rig, { subtree: true, attributes: true, childList: true });
+        await new Promise((resolve) => setTimeout(resolve, 350));
+        observer.disconnect();
+        return { writes, frames: s.scope.frames.size, timers: s.scope.timers.size, tugs: s.rescue.tugs };
+      });
+      assert.deepEqual(sleeping, { writes: 0, frames: 0, timers: 0, tugs: rescueTugs }, "Settled crew owns no work and makes no writes");
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      await page.waitForFunction(() => !(window as any).__portfolioSign);
+      const reduced = await page.evaluate(async () => {
+        scrollBy({ top: -180, behavior: "instant" });
+        let writes = 0;
+        const rig = document.querySelector(".sign-rig")!;
+        const observer = new MutationObserver((records) => { writes += records.length; });
+        observer.observe(rig, { subtree: true, attributes: true, childList: true });
+        await new Promise((resolve) => setTimeout(resolve, 350));
+        observer.disconnect();
+        return { writes, live: rig.classList.contains("is-live"), state: !!(window as any).__portfolioSign,
+          paths: rig.querySelectorAll("path").length };
+      });
+      assert.deepEqual(reduced, { writes: 0, live: false, state: false, paths: 0 }, "Reduced motion has no crew, swaying, or random tugs");
+      const report = { width, maxAcceleration, maxLag, starts, replay, rescue, sleeping, reduced, frames,
+        video: `.verify/sign-crew/${width}-crew.webm` };
+      await writeFile(`.verify/sign-crew/${width}-report.json`, JSON.stringify(report, null, 2));
+      reports.push(report);
+    } finally {
+      await context.close();
+      await video.saveAs(`.verify/sign-crew/${width}-crew.webm`);
+      await video.delete();
+    }
+  }
+  return reports;
+}
+
 export async function verifySign(
   browser: Browser,
   url: string,
@@ -392,7 +567,7 @@ export async function verifySign(
     );
     assert.ok(
       continuous.samples.every((p) => p.x >= 0 && p.right <= continuous.width),
-      "Scrolling does not inject sideways motion",
+      "The crew keeps the mobile board within the viewport",
     );
     await asleep(page);
     const mobileBottom = await pose(page);
@@ -438,7 +613,9 @@ export async function verifySign(
     } finally {
       await noJS.close();
     }
+    const crew = await verifyCrew(browser, url);
     return {
+      crew,
       positions,
       sequence,
       restored,
