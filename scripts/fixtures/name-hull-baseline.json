@@ -1,0 +1,20 @@
+[
+  {
+    "width": 1440,
+    "peakOverlap": 0.003595054960510347,
+    "peakSeparation": 0.013659588413720605,
+    "minFallWidth": 0.9999999999999918,
+    "maxImpactWidth": 1.0000000000000178,
+    "asleep": true,
+    "browserErrors": []
+  },
+  {
+    "width": 390,
+    "peakOverlap": 0.003982230966637094,
+    "peakSeparation": 0.013679832968691859,
+    "minFallWidth": 0.9999999999999836,
+    "maxImpactWidth": 1.0000000000000102,
+    "asleep": true,
+    "browserErrors": []
+  }
+]

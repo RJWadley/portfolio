@@ -1,0 +1,925 @@
+[
+  {
+    "text": "e",
+    "pose": {
+      "weight": 740,
+      "width": 97,
+      "grade": 0,
+      "round": 28,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.01,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 740,
+      "width": 97,
+      "grade": 0,
+      "round": 28,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.01,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 690,
+      "width": 89.5,
+      "grade": 0,
+      "round": 26,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.03,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 690,
+      "width": 89.5,
+      "grade": 0,
+      "round": 26,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.03,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 605,
+      "width": 76.5,
+      "grade": 0,
+      "round": 20,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.065,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 605,
+      "width": 76.5,
+      "grade": 0,
+      "round": 20,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.065,
+      "skew": 0
+    }
+  },
+  {
+    "text": "R",
+    "pose": {
+      "weight": 298.9396642327479,
+      "width": 31.904612526813946,
+      "grade": 0,
+      "round": 2.790995490664301,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.181685310635268,
+      "skew": 0
+    }
+  },
+  {
+    "text": "R",
+    "pose": {
+      "weight": 145,
+      "width": 25,
+      "grade": 0,
+      "round": 0,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.2,
+      "skew": 0
+    }
+  },
+  {
+    "text": "R",
+    "pose": {
+      "weight": 255,
+      "width": 25,
+      "grade": 0,
+      "round": 0,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.2,
+      "skew": 0
+    }
+  },
+  {
+    "text": "R",
+    "pose": {
+      "weight": 285,
+      "width": 28.5,
+      "grade": 0,
+      "round": 2,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.19,
+      "skew": 0
+    }
+  },
+  {
+    "text": "a",
+    "pose": {
+      "weight": 969.2808940317676,
+      "width": 145.76944952432802,
+      "grade": 0,
+      "round": 92.65301145145163,
+      "slant": 0,
+      "sx": 0.7316234455014933,
+      "sy": 0.8166049221449905,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 601.905052493092,
+      "width": 83.0259647454191,
+      "grade": 0,
+      "round": 45.83742210790367,
+      "slant": 0,
+      "sx": 0.8716552180978697,
+      "sy": 1.0166503115683854,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 765.7302467021132,
+      "width": 110.99883804233363,
+      "grade": 0,
+      "round": 68.12656417715827,
+      "slant": 0,
+      "sx": 0.8092456203039569,
+      "sy": 0.927493743291367,
+      "skew": 0
+    }
+  },
+  {
+    "text": "a",
+    "pose": {
+      "weight": 980,
+      "width": 147.5,
+      "grade": 0,
+      "round": 86,
+      "slant": -9.5,
+      "sx": 0.74,
+      "sy": 0.8150000000000001,
+      "skew": 17
+    }
+  },
+  {
+    "text": "R",
+    "pose": {
+      "weight": 700.1941837906695,
+      "width": 99.95198264543832,
+      "grade": 0,
+      "round": 59.485700512252635,
+      "slant": 0,
+      "sx": 0.8334400385656926,
+      "sy": 0.9620571979509894,
+      "skew": 0
+    }
+  },
+  {
+    "text": "d",
+    "pose": {
+      "weight": 985,
+      "width": 147.5,
+      "grade": 0,
+      "round": 86,
+      "slant": -9.5,
+      "sx": 0.74,
+      "sy": 0.8150000000000001,
+      "skew": 11
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 593.5200445519566,
+      "width": 81.78854812641427,
+      "grade": 0,
+      "round": 45.070276290804955,
+      "slant": 0,
+      "sx": 0.8738032263857461,
+      "sy": 1.0197188948367801,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 760.3354010251784,
+      "width": 110.19224395834121,
+      "grade": 0,
+      "round": 67.61289203042952,
+      "slant": 0,
+      "sx": 0.8106839023147974,
+      "sy": 0.929548431878282,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 675,
+      "width": 87,
+      "grade": 0,
+      "round": 24,
+      "slant": -2.5,
+      "sx": 1,
+      "sy": 1.035,
+      "skew": 4
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 610,
+      "width": 77.5,
+      "grade": 0,
+      "round": 20,
+      "slant": -0.5,
+      "sx": 1,
+      "sy": 1.06,
+      "skew": 4
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 585,
+      "width": 73.5,
+      "grade": 0,
+      "round": 20,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.07,
+      "skew": 4
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 590,
+      "width": 74.5,
+      "grade": 0,
+      "round": 20,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.07,
+      "skew": 3.5
+    }
+  },
+  {
+    "text": "R",
+    "pose": {
+      "weight": 985,
+      "width": 147.5,
+      "grade": 0,
+      "round": 86,
+      "slant": -6.5,
+      "sx": 0.74,
+      "sy": 0.8150000000000001,
+      "skew": 7
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 665,
+      "width": 85.5,
+      "grade": 0,
+      "round": 24,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.04,
+      "skew": 1.5
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 710,
+      "width": 92.5,
+      "grade": 0,
+      "round": 26,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.02,
+      "skew": 1
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 745,
+      "width": 98,
+      "grade": 0,
+      "round": 30,
+      "slant": 0,
+      "sx": 1,
+      "sy": 1.0050000000000001,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 680,
+      "width": 87.5,
+      "grade": 0,
+      "round": 26,
+      "slant": -5,
+      "sx": 1,
+      "sy": 1.035,
+      "skew": 17.5
+    }
+  },
+  {
+    "text": "R",
+    "pose": {
+      "weight": 685,
+      "width": 88.5,
+      "grade": 0,
+      "round": 26,
+      "slant": -8,
+      "sx": 1,
+      "sy": 1.03,
+      "skew": 1.5
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 615,
+      "width": 78.5,
+      "grade": 0,
+      "round": 22,
+      "slant": -5.5,
+      "sx": 1,
+      "sy": 1.055,
+      "skew": 18.5
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 640,
+      "width": 82,
+      "grade": 0,
+      "round": 22,
+      "slant": -5,
+      "sx": 1,
+      "sy": 1.05,
+      "skew": 14
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 730,
+      "width": 95.5,
+      "grade": 0,
+      "round": 28,
+      "slant": -3.5,
+      "sx": 1,
+      "sy": 1.0150000000000001,
+      "skew": 9
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 670,
+      "width": 86.5,
+      "grade": 0,
+      "round": 24,
+      "slant": -2,
+      "sx": 1,
+      "sy": 1.035,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 620,
+      "width": 79,
+      "grade": 0,
+      "round": 22,
+      "slant": -4.5,
+      "sx": 1,
+      "sy": 1.055,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 610,
+      "width": 77.5,
+      "grade": 0,
+      "round": 20,
+      "slant": -7.5,
+      "sx": 1,
+      "sy": 1.06,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 665,
+      "width": 86,
+      "grade": 0,
+      "round": 24,
+      "slant": -10,
+      "sx": 1,
+      "sy": 1.04,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 606.9521354622757,
+      "width": 79.4986339134647,
+      "grade": 0,
+      "round": 20.992066396297513,
+      "slant": -10,
+      "sx": 1,
+      "sy": 1.0546703095640941,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 710,
+      "width": 92.5,
+      "grade": 0,
+      "round": 28,
+      "slant": -10,
+      "sx": 1,
+      "sy": 1.02,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 685.1566964759038,
+      "width": 89.46830127389919,
+      "grade": 0,
+      "round": 27.82165541048542,
+      "slant": -10,
+      "sx": 0.9840693759664849,
+      "sy": 1.0249233124604602,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 668.1775822758287,
+      "width": 89.80597981971634,
+      "grade": 0,
+      "round": 29.34610406930551,
+      "slant": -9.815169557480708,
+      "sx": 0.9796207610629822,
+      "sy": 1.0247385451416475,
+      "skew": 1.7393217700771653
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 588.7085893869711,
+      "width": 77.09148084452634,
+      "grade": 0,
+      "round": 23.278813827371646,
+      "slant": -9.301502029962892,
+      "sx": 0.9841423103567039,
+      "sy": 1.0591864616574007,
+      "skew": 3.793991880148429
+    }
+  },
+  {
+    "text": "a",
+    "pose": {
+      "weight": 1000,
+      "width": 151,
+      "grade": 0,
+      "round": 90,
+      "slant": -2,
+      "sx": 0.72,
+      "sy": 0.8,
+      "skew": 2.5
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 621.9623071498713,
+      "width": 79.40267003319435,
+      "grade": 0,
+      "round": 22.033965682376603,
+      "slant": -7.83358680542766,
+      "sx": 0.997063608066165,
+      "sy": 1.0532223270378656,
+      "skew": 16.357737495568347
+    }
+  },
+  {
+    "text": "R",
+    "pose": {
+      "weight": 712.4488001888208,
+      "width": 93.79429919953728,
+      "grade": 0,
+      "round": 29.680816827100998,
+      "slant": -9.716251859841007,
+      "sx": 0.9823074476352145,
+      "sy": 1.0127745585834589,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 746.8041359539549,
+      "width": 99.38601463900008,
+      "grade": 0,
+      "round": 32.72808944525049,
+      "slant": -7.961013335970129,
+      "sx": 0.9763403613987652,
+      "sy": 0.9971542543308944,
+      "skew": 19.1467042926867
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 740,
+      "width": 97.5,
+      "grade": 0,
+      "round": 28,
+      "slant": -9,
+      "sx": 1,
+      "sy": 1.0050000000000001,
+      "skew": 20
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 625,
+      "width": 80,
+      "grade": 0,
+      "round": 22,
+      "slant": -10,
+      "sx": 1,
+      "sy": 1.055,
+      "skew": 20
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 740,
+      "width": 97.5,
+      "grade": 0,
+      "round": 28,
+      "slant": -10,
+      "sx": 1,
+      "sy": 1.0050000000000001,
+      "skew": 20
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 625,
+      "width": 80,
+      "grade": 0,
+      "round": 22,
+      "slant": -10,
+      "sx": 1,
+      "sy": 1.055,
+      "skew": 18.5
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 700,
+      "width": 91,
+      "grade": 0,
+      "round": 26,
+      "slant": -10,
+      "sx": 1,
+      "sy": 1.025,
+      "skew": 19
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 755,
+      "width": 99,
+      "grade": 0,
+      "round": 30,
+      "slant": -10,
+      "sx": 1,
+      "sy": 1,
+      "skew": 18
+    }
+  },
+  {
+    "text": "R",
+    "pose": {
+      "weight": 700,
+      "width": 91,
+      "grade": 0,
+      "round": 26,
+      "slant": -9.5,
+      "sx": 1,
+      "sy": 1.025,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 700,
+      "width": 91,
+      "grade": 0,
+      "round": 26,
+      "slant": -9.5,
+      "sx": 1,
+      "sy": 1.025,
+      "skew": 19.5
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 755,
+      "width": 99,
+      "grade": 0,
+      "round": 30,
+      "slant": -9.5,
+      "sx": 1,
+      "sy": 1,
+      "skew": 20
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 750,
+      "width": 98.5,
+      "grade": 0,
+      "round": 30,
+      "slant": -10,
+      "sx": 1,
+      "sy": 1.0050000000000001,
+      "skew": 20
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 750,
+      "width": 98.5,
+      "grade": 0,
+      "round": 30,
+      "slant": -6,
+      "sx": 1,
+      "sy": 1.0050000000000001,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 705,
+      "width": 92,
+      "grade": 0,
+      "round": 26,
+      "slant": -9.5,
+      "sx": 1,
+      "sy": 1.02,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 665,
+      "width": 86,
+      "grade": 0,
+      "round": 24,
+      "slant": -9,
+      "sx": 1,
+      "sy": 1.04,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 635,
+      "width": 81,
+      "grade": 0,
+      "round": 22,
+      "slant": -9,
+      "sx": 1,
+      "sy": 1.05,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 655,
+      "width": 84,
+      "grade": 0,
+      "round": 24,
+      "slant": -7,
+      "sx": 1,
+      "sy": 1.04,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 710,
+      "width": 92.5,
+      "grade": 0,
+      "round": 26,
+      "slant": -3.5,
+      "sx": 1,
+      "sy": 1.02,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 760,
+      "width": 99.5,
+      "grade": 0,
+      "round": 30,
+      "slant": -0.5,
+      "sx": 1,
+      "sy": 1,
+      "skew": 7.5
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 745,
+      "width": 98,
+      "grade": 0,
+      "round": 30,
+      "slant": -4.5,
+      "sx": 1,
+      "sy": 1.0050000000000001,
+      "skew": 14.5
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 755,
+      "width": 99.5,
+      "grade": 0,
+      "round": 30,
+      "slant": -2,
+      "sx": 1,
+      "sy": 1,
+      "skew": 11
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 767.1271295924172,
+      "width": 111.23735342020183,
+      "grade": 0,
+      "round": 68.31661627107717,
+      "slant": 0,
+      "sx": 0.8087134744409838,
+      "sy": 0.9267335349156913,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 761.1129259605581,
+      "width": 110.32463333923016,
+      "grade": 0,
+      "round": 67.71796296764299,
+      "slant": 0,
+      "sx": 0.8103897036905996,
+      "sy": 0.929128148129428,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "weight": 518.3045182575152,
+      "width": 82.02996511414422,
+      "grade": 0,
+      "round": 45.26187707471762,
+      "slant": -8.634238763393313,
+      "sx": 0.8732667441907906,
+      "sy": 1.0189524917011294,
+      "skew": 9.806032209975
+    }
+  },
+  {
+    "text": "a",
+    "pose": {
+      "weight": 1000,
+      "width": 151,
+      "grade": 0,
+      "round": 100,
+      "slant": -9.5,
+      "sx": 0.72,
+      "sy": 0.8,
+      "skew": 0
+    }
+  },
+  {
+    "text": "a",
+    "pose": {
+      "weight": 1000,
+      "width": 151,
+      "grade": 0,
+      "round": 98,
+      "slant": -10,
+      "sx": 0.72,
+      "sy": 0.8,
+      "skew": 0
+    }
+  },
+  {
+    "text": "a",
+    "pose": {
+      "weight": 970,
+      "width": 144.5,
+      "grade": 0,
+      "round": 82,
+      "slant": -10,
+      "sx": 0.755,
+      "sy": 0.8250000000000001,
+      "skew": 0
+    }
+  },
+  {
+    "text": "R",
+    "pose": {
+      "weight": 1000,
+      "width": 151,
+      "grade": 0,
+      "round": 94,
+      "slant": -10,
+      "sx": 0.72,
+      "sy": 0.8,
+      "skew": 0
+    }
+  },
+  {
+    "text": "e",
+    "pose": {
+      "width": 82.05,
+      "weight": 534.9,
+      "round": 44.5,
+      "grade": 0,
+      "slant": -10,
+      "sx": 0.8733000000000001,
+      "sy": 1.0190000000000001,
+      "skew": 19.68
+    }
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "name": "robbie-wadley",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "NODE_ENV=development node --watch --import remix/node-tsx server.ts",
+    "hmr": "NODE_ENV=development node hmr.ts",
+    "start": "NODE_ENV=production node --import remix/node-tsx server.ts",
+    "test": "NODE_ENV=test remix test",
+    "typecheck": "tsc --noEmit",
+    "build": "NODE_ENV=production node --import remix/node-tsx scripts/prerender.ts",
+    "preview": "node --import remix/node-tsx scripts/preview.ts",
+    "verify": "node --import remix/node-tsx scripts/verify-cleanup.ts && node --import remix/node-tsx scripts/verify.ts",
+    "verify:cleanup": "node --import remix/node-tsx scripts/verify-cleanup.ts"
+  },
+  "engines": {
+    "node": "^24.3.0"
+  },
+  "dependencies": {
+    "remix": "3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/serve-handler": "6.1.4",
+    "earcut": "3.0.2",
+    "es-module-lexer": "^3.0.3",
+    "parse5": "^8.0.1",
+    "path-to-regexp": "6.3.0",
+    "playwright": "^1.63.0",
+    "serve-handler": "6.1.7",
+    "typescript": "^7.0.2"
+  },
+  "packageManager": "pnpm@12.9.1",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^24.3.0",
+      "onFail": "download"
+    }
+  }
+}

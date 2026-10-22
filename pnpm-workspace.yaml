@@ -1,0 +1,6 @@
+strictPeerDependencies: true
+strictDepBuilds: true
+allowBuilds:
+  esbuild: true
+minimumReleaseAgeExclude:
+  - es-module-lexer@3.0.3
