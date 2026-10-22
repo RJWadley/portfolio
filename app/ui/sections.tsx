@@ -206,7 +206,7 @@ export function UnderTheHood() {
           {"\n            "}
           <p>
             {
-              "I designed Konn3kt V3 and I’m building it, mostly frontend, with backend and device code where it’s needed. Before that I helped on the live V1 app and on iqdbc."
+              "V3 is an upcoming rebuild of the Konn3kt app: one place for your car, your drives, and your device."
             }
           </p>
           {"\n            "}
