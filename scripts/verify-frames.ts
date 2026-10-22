@@ -118,12 +118,26 @@ export async function runScenes(page: Page, cdp: CDPSession, url: string) {
     );
     await sleep(16);
   }
+  // The cursor ball enters from off-screen and can knock letters around on its
+  // way in. Start the drag from settled letters, not mid-tumble.
+  await page.waitForFunction(() => (window as any).__portfolioPhysics.letters()
+    .every((l: any) => l.body.speed < 0.2 && Math.abs(l.body.angularVelocity) < 0.002), null, { timeout: 8000 })
+    .catch(() => {});
   await scene(page, "drag");
   const glyph = await page.locator(".hero-name .char").nth(2).boundingBox();
   assert.ok(glyph);
   const dragBodyIds = await page.evaluate(() => (window as any).__portfolioPhysics.letters().map((l: any) => l.body.id));
-  const x = glyph.x + glyph.width * 0.5,
-    y = glyph.y + glyph.height * 0.5;
+  // Earlier scenes (the ball flying in from off-screen) can leave a neighbour
+  // overlapping this glyph. Grab a point where this glyph is the topmost letter.
+  const { x, y } = await page.evaluate((box) => {
+    const target = document.querySelectorAll(".hero-name .char")[2];
+    for (const fy of [0.5, 0.35, 0.65, 0.2, 0.8])
+      for (const fx of [0.5, 0.35, 0.65, 0.2, 0.8]) {
+        const x = box.x + box.width * fx, y = box.y + box.height * fy;
+        if (document.elementFromPoint(x, y)?.closest(".char") === target) return { x, y };
+      }
+    return { x: box.x + box.width * 0.5, y: box.y + box.height * 0.5 };
+  }, glyph);
   const hit = await page.evaluate(({ x, y }) => {
     const el = document.elementFromPoint(x, y);
     document.addEventListener("pointerdown", e => {

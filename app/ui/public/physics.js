@@ -1326,7 +1326,16 @@ export function mountPhysics(signal) {
     pointer.y = e.clientY;
     if (!ball) {
       // The only placement: first appearance. Subsequent entry/scroll/remeasure retains momentum.
-      ball = ballShape(pointer.x + scrollX, pointer.y + scrollY);
+      // Start just past the viewport edge nearest the pointer, so the ball flies in
+      // and collides its way to the cursor instead of appearing inside a letter.
+      const w = innerWidth,
+        h = innerHeight,
+        margin = Math.max(ballWidth, ballHeight),
+        edges = [pointer.x, w - pointer.x, pointer.y, h - pointer.y],
+        nearest = edges.indexOf(Math.min(...edges));
+      const x = nearest === 0 ? -margin : nearest === 1 ? w + margin : pointer.x,
+        y = nearest === 2 ? -margin : nearest === 3 ? h + margin : pointer.y;
+      ball = ballShape(x + scrollX, y + scrollY);
       Body.setInertia(ball, Infinity);
       Composite.add(engine.world, ball);
     }
