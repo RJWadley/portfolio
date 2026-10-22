@@ -179,7 +179,9 @@ export function mountPhysics(signal) {
     LETTER_ANGLE_SPRING = 0.012,
     LETTER_ANGLE_DAMPING = 0.06,
     GRAB_STIFFNESS = 0.2,
-    GRAB_DAMPING = 0.1;
+    // Limit overshoot when pointer updates move the grab spring between
+    // adaptive solver steps, while retaining its spring response.
+    GRAB_DAMPING = 0.4;
   const NUDGE = 0.8; // maximum sideways acceleration (px/frame²), tuned at the reference font
   const ENTRANCE_SETTLE_FRAMES = 90; // then normal unblocking can help a crowded entrance
   const NUDGE_FRAMES = 90; // ramps up then back down over this many frames

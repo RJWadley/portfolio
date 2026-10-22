@@ -31,7 +31,7 @@ async function installSampler(page: Page) {
     const { createGlyphOracle } = await import(source);
     const oracle = await createGlyphOracle(undefined, 2);
     const w = window as any, state = w.__glyphJitter = { scene: "drop-impact", sceneAt: performance.now(), samples: [] as any[], stopped: false };
-    function sample() {
+    function sample(now: number) {
       if (state.stopped) return;
       const p = w.__portfolioPhysics;
       if (p?.letters().length === 18) {
@@ -50,11 +50,13 @@ async function installSampler(page: Page) {
             angle: Math.atan2(rigid.b, rigid.a), bodyAngle: l.body.angle, glyphTransform: measured.transform, pose: { ...pose }, requested: { ...(h.requestedPose ?? pose) },
             anchorError: Math.hypot(measured.centroidDelta.x, measured.centroidDelta.y), puffTarget: l.proximityTarget, puffValue: l.axes.puff.value, body: { ...l.body.position }, held: !!l.held };
         });
-        state.samples.push({ at: performance.now(), solver: p.engine.timing.timestamp, scene: state.scene, sceneAt: state.sceneAt, rows });
+        state.samples.push({ at: now, solver: p.engine.timing.timestamp, scene: state.scene, sceneAt: state.sceneAt, rows });
       }
-      requestAnimationFrame(() => setTimeout(sample, 0));
+      requestAnimationFrame(sample);
     }
-    requestAnimationFrame(() => setTimeout(sample, 0));
+    // Sample in rAF itself. Touch input can defer timers and turn a smooth
+    // solver trajectory into sparse, bunched measurements.
+    requestAnimationFrame(sample);
   }, source);
 }
 
@@ -186,7 +188,7 @@ export async function verifyJitter(browser: Browser, url: string, { label = "aft
       results.push({ width, scenes: summarizeJitter(samples) });
     } finally { await context.close(); }
   }
-  await writeFile(`.verify/jitter-${label}.json`, JSON.stringify({ resolution: "Post-rAF actual DOM glyph (SVG contour or native font) alpha >=0.5 at 2 raster px/CSS px (DPR1), actual DOM axes/transforms; alpha-mask centroid/bounds per rAF, resampled at 60 Hz; morphology in CSS pixels after removing rigid body position/rotation", results }, null, 2));
+  await writeFile(`.verify/jitter-${label}.json`, JSON.stringify({ resolution: "rAF actual DOM glyph (SVG contour or native font) alpha >=0.5 at 2 raster px/CSS px (DPR1), actual DOM axes/transforms; alpha-mask centroid/bounds per rAF, resampled at 60 Hz; morphology in CSS pixels after removing rigid body position/rotation", results }, null, 2));
   if (enforce) for (const viewport of results) for (const scene of viewport.scenes) {
     // Gate full on-screen motion too: contact-induced body twitch must not be
     // hidden by subtracting the rigid pose. Drop/drag retain the baseline's
@@ -194,13 +196,7 @@ export async function verifyJitter(browser: Browser, url: string, { label = "aft
     const screenBudgets: Record<string, number> = { "drop-impact": 1.5, "grab-drag": 1.25, "proximity": .1,
       "proximity-return": .1, "return-home": .2, "burst": .15 };
     const screenBudget = screenBudgets[scene.scene]!;
-    // KNOWN ISSUE: the grab stutter (see verify-frames.ts) makes whole-screen
-    // drag motion vary run to run (1.23–1.42 observed). Reported, not gated.
-    if (scene.scene === "grab-drag") {
-      if (scene.screenHighPassRms > screenBudget)
-        console.warn(`KNOWN ISSUE grab stutter: whole-screen drag RMS ${viewport.width} ${scene.screenHighPassRms}/${screenBudget}`);
-    } else
-      assert.ok(scene.screenHighPassRms <= screenBudget, `Whole-screen centroid high-pass RMS: ${viewport.width}/${scene.scene} ${scene.screenHighPassRms}/${screenBudget}`);
+    assert.ok(scene.screenHighPassRms <= screenBudget, `Whole-screen centroid high-pass RMS: ${viewport.width}/${scene.scene} ${scene.screenHighPassRms}/${screenBudget}`);
     if (scene.scene === "burst" || scene.scene.startsWith("proximity"))
       assert.ok(scene.maxLetterScreenHighPassRms <= .35, `Every standing morph has subpixel screen jitter: ${viewport.width}/${scene.scene}`);
     assert.equal(scene.axisReversals, 0, `No axis reverses away from a monotonic requested transition: ${viewport.width}/${scene.scene}`);
