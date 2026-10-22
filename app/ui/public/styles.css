@@ -31,7 +31,7 @@
 :where(h1, h2, h3, .wordmark, .marquee-track, .sign b) {
   --type-weight: 760; --type-width: 100; --type-round: 30;
 }
-:where(.mono, .facts dt, .archive-list small, .sign small, .layers li) {
+:where(.mono, .facts dt, .archive-list small, .sign small) {
   --type-weight: 640; --type-width: 80; --type-grade: 20; --type-round: 70;
 }
 :where(.hero-intro, .card-lead, .about-lead) { --type-weight: 480; --type-round: 25; }
@@ -337,7 +337,7 @@ section { padding: clamp(5rem, 12vw, 10rem) var(--gutter) 0; }
 .under { background: var(--ink); color: var(--paper); margin-top: clamp(5rem, 12vw, 10rem); padding-bottom: clamp(5rem, 10vw, 8rem); --line: rgb(236 237 232 / 0.16); --muted: #a2a59c; }
 .under :focus-visible, .contact :focus-visible { outline-color: var(--signal); }
 .konn3kt {
-  display: grid; grid-template-columns: 1fr 1.5fr auto; gap: clamp(1.5rem, 4vw, 4rem); align-items: start;
+  display: grid; grid-template-columns: 1fr 1.5fr; gap: clamp(1.5rem, 4vw, 4rem); align-items: start;
   padding: clamp(1.5rem, 3.5vw, 3rem); border-radius: var(--radius);
   background: #1c1f1c; border: 1px solid var(--line);
 }
@@ -347,19 +347,10 @@ section { padding: clamp(5rem, 12vw, 10rem) var(--gutter) 0; }
 .konn3kt-copy { display: grid; gap: 1rem; }
 .konn3kt-copy p:not(.card-lead) { color: var(--muted); }
 .konn3kt .pill { --accent: var(--signal); }
-.layers { display: grid; gap: 0.35rem; width: 9rem; perspective: 600px; }
-.layers li {
-  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;
-  padding: 0.7rem 0.9rem; border-radius: 0.6rem; background: #2a2e2a;
-  transform: rotateX(var(--tilt, 0deg)) translateY(var(--lift, 0));
-  transition: transform 0.6s var(--ease-spring), background 0.3s, color 0.3s;
-}
-.layers li:first-child { background: var(--signal); color: var(--ink); }
-.konn3kt:hover .layers li { --tilt: 35deg; }
-.konn3kt:hover .layers li:nth-child(1) { --lift: -0.6rem; }
-.konn3kt:hover .layers li:nth-child(2) { --lift: -0.2rem; transition-delay: 40ms; }
-.konn3kt:hover .layers li:nth-child(3) { --lift: 0.2rem; transition-delay: 80ms; }
-.konn3kt:hover .layers li:nth-child(4) { --lift: 0.6rem; transition-delay: 120ms; }
+.pieces { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 3vw, 2.5rem); padding-top: clamp(1.25rem, 2.5vw, 2rem); border-top: 1px solid var(--line); }
+.pieces dt { --type-weight: 640; --type-width: 92; font-size: 1.1rem; letter-spacing: -0.02em; }
+.pieces div:first-child dt { color: var(--signal); }
+.pieces dd { margin: 0.4rem 0 0; color: var(--muted); font-size: 0.95rem; line-height: 1.45; }
 
 .sub-head { font-size: clamp(1.75rem, 3vw, 2.5rem); letter-spacing: -0.04em; margin: clamp(4rem, 8vw, 6rem) 0 1rem; }
 .oss { border-top: 1px solid var(--line); }
@@ -427,7 +418,7 @@ section { padding: clamp(5rem, 12vw, 10rem) var(--gutter) 0; }
   .section-head, .about-grid { grid-template-columns: 1fr; gap: 1rem; }
   .about-lead, .timeline { grid-column: auto; }
   .konn3kt { grid-template-columns: 1fr; }
-  .layers { grid-auto-flow: column; width: auto; }
+  .pieces { grid-template-columns: 1fr; }
   .oss a { grid-template-columns: 1fr auto; gap: 0.4rem 1rem; }
   .oss-what { grid-column: 1; }
   .oss-tag { grid-column: 1; grid-row: 3; }

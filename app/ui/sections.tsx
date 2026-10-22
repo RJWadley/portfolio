@@ -200,13 +200,13 @@ export function UnderTheHood() {
           {"\n            "}
           <p class="card-lead">
             {
-              "A companion app for IQPilot driver assistance on web, iOS, and Android."
+              "IQ.Pilot is driver-assistance software for cars. Konn3kt is the app that goes with it, on web, iOS, and Android."
             }
           </p>
           {"\n            "}
           <p>
             {
-              "I designed the interface and I’m building the V3 app, mostly frontend with backend and device code where needed. It puts devices, driving models, live cameras, trip playback, and clip sharing in one place. I made smaller contributions to the live V1 app, and some to iqdbc."
+              "I designed Konn3kt V3 and I’m building it, mostly frontend, with backend and device code where it’s needed. Before that I helped on the live V1 app and on iqdbc."
             }
           </p>
           {"\n            "}
@@ -216,20 +216,26 @@ export function UnderTheHood() {
             target="_blank"
             rel="noopener"
           >
-            {"About IQPilot "}
+            {"About IQ.Pilot "}
             <span aria-hidden="true"><Arrow /></span>
           </a>
           {"\n          "}
         </div>
         {"\n          "}
-        <ul class="layers" aria-label="Layers I work in" role="list">
-          {"\n            "}
-          <li>{"Interface"}</li>
-          <li>{"App"}</li>
-          <li>{"API"}</li>
-          <li>{"Device"}</li>
-          {"\n          "}
-        </ul>
+        <dl class="pieces">
+          <div>
+            <dt>{"IQ.Pilot"}</dt>
+            <dd>{"Runs on a small device mounted in the car, like a comma 3X. It helps steer, holds speed, navigates, and records bumps while you’re parked."}</dd>
+          </div>
+          <div>
+            <dt>{"Konn3kt"}</dt>
+            <dd>{"The companion app. Change settings over Bluetooth, download driving models, send destinations, and watch live or past drives. V3 brings devices, models, cameras, trip playback, and clip sharing into one place."}</dd>
+          </div>
+          <div>
+            <dt>{"iqdbc"}</dt>
+            <dd>{"The car definitions that let IQ.Pilot read and talk to each supported vehicle."}</dd>
+          </div>
+        </dl>
         {"\n        "}
       </article>
       {"\n\n        "}
