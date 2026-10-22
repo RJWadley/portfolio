@@ -1,0 +1,275 @@
+{
+  "alphaThreshold": 128,
+  "rasterPixelsPerDevicePixel": 4,
+  "percentileDefinition": "sorted[floor(N * p)]",
+  "affinePoses": [
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      1.2,
+      0
+    ],
+    [
+      0.72,
+      0.8,
+      20
+    ],
+    [
+      0.66,
+      0.8,
+      20
+    ],
+    [
+      1,
+      1.2,
+      20
+    ]
+  ],
+  "metric": "IoU = pixels(glyph \u2229 union(Matter parts)) / pixels(glyph \u222a union(Matter parts)); alpha >= 128; 4 raster pixels per device pixel; computed font axes and nested CSS transforms; no viewport clipping",
+  "oracleSha256": "1731dc75608eebc8583c9cba66d4bf4410936cf6bcde201c83ccba20aa2abd6f",
+  "sourceSha256": {
+    "glyph-hulls.js": "fcdc8311baea7dc6c96449526ac1b6a1e6a0638bdcbd19d9ca50ac7ddf918432",
+    "glyph-shapes.js": "490b55fd8c388e98853db5c6cc93fa27e273e827f85b8bd86c98b0cfa111b459",
+    "physics.js": "4fff8f86fb0d6ac5f608852d5a69d552bbfcb664a18c92832479f5b0711efe9d",
+    "font": "71c651acf7b94c3f82af1050f2a7e6f610f937b31ba010eb0a13b1a859427c99"
+  },
+  "restDynamics": [
+    {
+      "char": "R",
+      "fontSize": 302.4,
+      "mass": 58.785906816,
+      "inertia": 600610.9337472252,
+      "parts": 3
+    },
+    {
+      "char": "o",
+      "fontSize": 302.4,
+      "mass": 45.74802758399996,
+      "inertia": 666922.8292530368,
+      "parts": 0
+    },
+    {
+      "char": "b",
+      "fontSize": 302.4,
+      "mass": 56.207136383999995,
+      "inertia": 746206.0064677775,
+      "parts": 3
+    },
+    {
+      "char": "b",
+      "fontSize": 302.4,
+      "mass": 56.207136383999995,
+      "inertia": 746206.0064677777,
+      "parts": 3
+    },
+    {
+      "char": "i",
+      "fontSize": 302.4,
+      "mass": 20.99366035200001,
+      "inertia": 154925.9913352722,
+      "parts": 2
+    },
+    {
+      "char": "e",
+      "fontSize": 302.4,
+      "mass": 38.53067097600001,
+      "inertia": 238247.69179573975,
+      "parts": 5
+    },
+    {
+      "char": "W",
+      "fontSize": 302.4,
+      "mass": 71.862650496,
+      "inertia": 1089400.0046712453,
+      "parts": 4
+    },
+    {
+      "char": "a",
+      "fontSize": 302.4,
+      "mass": 39.39711955199999,
+      "inertia": 159008.1050488358,
+      "parts": 6
+    },
+    {
+      "char": "d",
+      "fontSize": 302.4,
+      "mass": 56.339732736,
+      "inertia": 761943.9293005557,
+      "parts": 2
+    },
+    {
+      "char": "l",
+      "fontSize": 302.4,
+      "mass": 22.41792806400001,
+      "inertia": 374972.4732210854,
+      "parts": 0
+    },
+    {
+      "char": "e",
+      "fontSize": 302.4,
+      "mass": 38.530670976,
+      "inertia": 238247.69179573958,
+      "parts": 5
+    },
+    {
+      "char": "y",
+      "fontSize": 302.4,
+      "mass": 33.51944332799997,
+      "inertia": 302578.5175468367,
+      "parts": 3
+    }
+  ],
+  "results": [
+    {
+      "width": 1440,
+      "static": {
+        "count": 7680,
+        "min": 0.16972702265330136,
+        "p5": 0.25390680776126034,
+        "median": 0.7381223995663033
+      },
+      "staticBelow95": 7632,
+      "rest": {
+        "count": 12,
+        "min": 0.7819689796447487,
+        "p5": 0.7819689796447487,
+        "median": 0.9165685735122894
+      },
+      "live": {
+        "count": 5220,
+        "min": 0.2929715885928998,
+        "p5": 0.45632776539856545,
+        "median": 0.8650628256205946
+      },
+      "byScene": {
+        "drop-impact": {
+          "count": 960,
+          "min": 0.2930138376261138,
+          "p5": 0.4048429370574659,
+          "median": 0.8252390302296766
+        },
+        "return-home": {
+          "count": 756,
+          "min": 0.5383953464358242,
+          "p5": 0.7819689796447487,
+          "median": 0.8794030127150211
+        },
+        "burst": {
+          "count": 780,
+          "min": 0.3884500915750916,
+          "p5": 0.7777246825565626,
+          "median": 0.8794030127150211
+        },
+        "grab-drag": {
+          "count": 288,
+          "min": 0.5109329743401461,
+          "p5": 0.7819689796447487,
+          "median": 0.8650628256205946
+        },
+        "rest": {
+          "count": 12,
+          "min": 0.7819689796447487,
+          "p5": 0.7819689796447487,
+          "median": 0.9165685735122894
+        },
+        "proximity-return": {
+          "count": 744,
+          "min": 0.2929715885928998,
+          "p5": 0.3820344496626102,
+          "median": 0.8237052715126661
+        },
+        "proximity": {
+          "count": 600,
+          "min": 0.7995194982142425,
+          "p5": 0.8365948159346436,
+          "median": 0.867476028304757
+        },
+        "entrance": {
+          "count": 1080,
+          "min": 0.2930138376261138,
+          "p5": 0.41727568629859363,
+          "median": 0.8538743703810433
+        }
+      },
+      "peakInkOverlap": 273.3125
+    },
+    {
+      "width": 390,
+      "static": {
+        "count": 7680,
+        "min": 0.16903228090046724,
+        "p5": 0.25416637243132545,
+        "median": 0.7403649310191366
+      },
+      "staticBelow95": 7636,
+      "rest": {
+        "count": 12,
+        "min": 0.7817997605231648,
+        "p5": 0.7817997605231648,
+        "median": 0.9182456267956505
+      },
+      "live": {
+        "count": 5232,
+        "min": 0.27815761065131345,
+        "p5": 0.413125,
+        "median": 0.8535318444995864
+      },
+      "byScene": {
+        "drop-impact": {
+          "count": 960,
+          "min": 0.27815761065131345,
+          "p5": 0.37651326784331307,
+          "median": 0.8233440852149126
+        },
+        "return-home": {
+          "count": 636,
+          "min": 0.4777976545418406,
+          "p5": 0.7809035349037192,
+          "median": 0.8796005842771965
+        },
+        "burst": {
+          "count": 780,
+          "min": 0.39085571517801376,
+          "p5": 0.7790679179258788,
+          "median": 0.8800872441397823
+        },
+        "grab-drag": {
+          "count": 288,
+          "min": 0.46219572166215883,
+          "p5": 0.7417470399121775,
+          "median": 0.8656144385213059
+        },
+        "rest": {
+          "count": 12,
+          "min": 0.7817997605231648,
+          "p5": 0.7817997605231648,
+          "median": 0.9182456267956505
+        },
+        "proximity-return": {
+          "count": 876,
+          "min": 0.27815761065131345,
+          "p5": 0.3612250478534318,
+          "median": 0.8115990527182867
+        },
+        "proximity": {
+          "count": 600,
+          "min": 0.8001528818223513,
+          "p5": 0.8384133330338492,
+          "median": 0.8690209226883804
+        },
+        "entrance": {
+          "count": 1080,
+          "min": 0.27815761065131345,
+          "p5": 0.3830059540370597,
+          "median": 0.8235722172036535
+        }
+      },
+      "peakInkOverlap": 16.8125
+    }
+  ],
+  "overlapDefinition": "Peak extra rendered ink area (sum of glyph areas minus their union), CSS px\u00b2, among W,a,d during sampled entrance impacts; same alpha threshold and raster scale as IoU."
+}
