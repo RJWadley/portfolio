@@ -1,4 +1,5 @@
 import { verifyJitter } from "./verify-jitter.ts";
+import { verifyJitterSampling } from "./verify-jitter-sampling.ts";
 import { verifyGlyphData } from "./verify-glyph-data.ts";
 import assert from "node:assert/strict";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
@@ -261,6 +262,7 @@ try {
   await page.close();
   report.glyphData = await verifyGlyphData();
   report.typography = await verifyTypography(browser, built, watch);
+  report.jitterSampling = await verifyJitterSampling(browser, built);
   report.jitter = await verifyJitter(browser, built);
   const glyphReport = await verifyGlyphIoU(browser, built);
   report.glyphIoU=glyphReport.results;report.nameAxes=glyphReport.axisScenes;
