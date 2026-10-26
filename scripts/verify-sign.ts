@@ -254,6 +254,32 @@ export async function verifyCrew(browser: Browser, url: string) {
         return { writes, frames: s.scope.frames.size, timers: s.scope.timers.size, tugs: s.rescue.tugs };
       });
       assert.deepEqual(sleeping, { writes: 0, frames: 0, timers: 0, tugs: rescueTugs }, "Settled crew owns no work and makes no writes");
+
+      // When tugs cannot flip the board, the crew pays one rope out until it swings upright.
+      const rescuePull = await page.evaluate(() => {
+        const constants = (window as any).__portfolioSign().verify.constants, pull = constants.rescuePull;
+        constants.rescuePull = [0.05, 0.05];
+        return pull as number[];
+      });
+      await invert(page);
+      const failsafe = [];
+      for (let step = 0; step < 3600; step += 60) {
+        const sample = await page.evaluate(() => {
+          let active = true;
+          for (let n = 0; n < 60 && active; n++) active = (window as any).__portfolioSign().verify.advance();
+          const s = (window as any).__portfolioSign(), [a, b] = s.ends;
+          return { active, angle: Math.atan2(b.y - a.y, b.x - a.x), slack: Math.max(...s.rescue.slack) as number };
+        });
+        failsafe.push({ step, ...sample });
+        await capture("failsafe", step);
+        if (!sample.active) break;
+      }
+      await page.evaluate((pull) => { (window as any).__portfolioSign().verify.constants.rescuePull = pull; }, rescuePull);
+      assert.ok(failsafe.some((s) => s.slack > 0), "Failed tugs give way to lowering a rope");
+      assert.ok(!failsafe.at(-1)!.active && Math.abs(failsafe.at(-1)!.angle) < 0.05,
+        `Lowering a rope rights the board and lets it sleep: ${JSON.stringify(failsafe.at(-1))}`);
+      await page.evaluate(() => (window as any).__portfolioSign().verify.wake());
+      await asleep(page);
       await page.emulateMedia({ reducedMotion: "reduce" });
       await page.waitForFunction(() => !(window as any).__portfolioSign);
       const reduced = await page.evaluate(async () => {
@@ -268,7 +294,7 @@ export async function verifyCrew(browser: Browser, url: string) {
           paths: rig.querySelectorAll("path").length };
       });
       assert.deepEqual(reduced, { writes: 0, live: false, state: false, paths: 0 }, "Reduced motion has no crew, swaying, or random tugs");
-      const report = { width, maxAcceleration, maxLag, starts, replay, rescue, sleeping, reduced, frames,
+      const report = { width, maxAcceleration, maxLag, starts, replay, rescue, failsafe, sleeping, reduced, frames,
         video: `.verify/sign-crew/${width}-crew.webm` };
       await writeFile(`.verify/sign-crew/${width}-report.json`, JSON.stringify(report, null, 2));
       reports.push(report);

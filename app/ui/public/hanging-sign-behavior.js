@@ -51,14 +51,23 @@ function mountAnimated(signal) {
       feedPace: [0.45, 1.35],
       feedSmoothing: 0.08,
       feedChange: [18, 48], // steps between independent changes of pace
-      pullSteps: [8, 14],
-      restSteps: [7, 17],
-      pullSize: [7, 15], // px; longer backlogs increase the size and shorten rests
+      pullSteps: [10, 16],
+      restSteps: [12, 26],
+      pullSize: [11, 20], // px; longer backlogs increase the size and shorten rests
+      // Big backlog shares make yanks that can swing the board over and cross the ropes.
+      pullBacklog: 0.1, // share of the remaining backlog added to each pull
+      restHurry: 0.9, // largest share of a rest skipped while far behind
       invertedCosine: -0.35, // board points over 110° away from upright
       rescuePull: [1.4, 1.8], // multiples of the distance between the board’s holes
       rescueRest: [50, 85],
+      rescueSteps: [8, 14], // a quicker yank than ordinary hoisting pulls
+      rescueHold: 1, // px/step; keep the short rope until a righted board stops swinging
+      // Failsafe after the tugs: pay one rope out until the board hangs from the
+      // other and swings upright, then reel the slack back in.
+      rescueLower: 1.2, // px/step
+      rescueSlack: 4, // most slack, in multiples of the distance between the holes
       rescueBeat: 42, // near-rest steps before noticing an inverted board
-      rescueAttempts: 5,
+      rescueAttempts: 2, // tugs before the crew lowers a rope instead
       rescueCooldown: 8000, // one owned timer, with no animation during the break
     };
     const verify = new URLSearchParams(location.search).has("verify");
@@ -135,6 +144,7 @@ function mountAnimated(signal) {
         side: random() < 0.5 ? 0 : 1,
         wait: 0,
         offsets: [0, 0],
+        slack: [0, 0],
         cooling: false,
       };
       clearTimeout(rescueTimer);
@@ -294,16 +304,16 @@ function mountAnimated(signal) {
         return false;
       }
       if (!c.pull && --c.wait <= 0) {
-        c.duration = Math.round(between(CREW.pullSteps));
+        c.duration = Math.round(between(rescue.offsets[i] ? CREW.rescueSteps : CREW.pullSteps));
         if (rescue.offsets[i])
           c.duration = Math.max(c.duration, Math.ceil(-gap * 2 / REEL_MAX));
         const hurry = Math.min(1, -gap / 400);
         c.size = Math.min(
           -gap,
-          rescue.offsets[i] ? -gap : between(CREW.pullSize) + -gap * 0.22,
+          rescue.offsets[i] ? -gap : between(CREW.pullSize) + -gap * CREW.pullBacklog,
           REEL_MAX * c.duration / 2,
         );
-        c.wait = Math.round(between(CREW.restSteps) * (1 - hurry * 0.6));
+        c.wait = Math.round(between(CREW.restSteps) * (1 - hurry * CREW.restHurry));
         c.pull = c.duration;
         c.tugs++;
       }
@@ -326,6 +336,30 @@ function mountAnimated(signal) {
     function stepRescue(motion) {
       const inverted = (ends[1].x - ends[0].x) / bar < CREW.invertedCosine;
       const atTarget = lengths.every((l) => Math.abs(l - ropeLen) < 0.1);
+      const lowering = rescue.slack.findIndex((n) => n > 0);
+      if (lowering >= 0 && !grab) {
+        if (!inverted) {
+          if (motion < CREW.rescueHold) {
+            rescue.slack.fill(0);
+            rescue.attempts = 0;
+          }
+          return;
+        }
+        if (rescue.slack[lowering] < bar * CREW.rescueSlack) {
+          rescue.slack[lowering] += CREW.rescueLower;
+          return;
+        }
+        if (motion > 0.15) return;
+        // Even a fully slack rope left it inverted: rest, then start over.
+        rescue.slack.fill(0);
+        rescue.cooling = true;
+        rescueTimer = setTimeout(() => {
+          rescue.cooling = false;
+          rescue.attempts = 0;
+          kick();
+        }, CREW.rescueCooldown);
+        return;
+      }
       if (grab || !inverted) {
         if (rescue.cooling) clearTimeout(rescueTimer);
         rescue.cooling = false;
@@ -333,7 +367,8 @@ function mountAnimated(signal) {
         // Passing upright during a spin is not a successful rescue yet.
         if (grab || (atTarget && motion < 0.15 && ends[1].x - ends[0].x > bar * 0.85))
           rescue.attempts = 0;
-        rescue.offsets.fill(0);
+        if (grab || motion < CREW.rescueHold) rescue.offsets.fill(0);
+        rescue.slack.fill(0);
         return;
       }
       if (rescue.cooling) return;
@@ -348,12 +383,7 @@ function mountAnimated(signal) {
       if (++rescue.quiet < CREW.rescueBeat) return;
       rescue.quiet = 0;
       if (rescue.attempts >= CREW.rescueAttempts) {
-        rescue.cooling = true;
-        rescueTimer = setTimeout(() => {
-          rescue.cooling = false;
-          rescue.attempts = 0;
-          kick();
-        }, CREW.rescueCooldown);
+        rescue.slack[rescue.side] = CREW.rescueLower;
         return;
       }
       // One operator gives a stronger pull, then eases that rope back out.
@@ -376,7 +406,7 @@ function mountAnimated(signal) {
           crew[i].pull = crew[i].payout = 0;
           continue;
         }
-        const target = ropeLen - rescue.offsets[i];
+        const target = ropeLen - rescue.offsets[i] + rescue.slack[i];
         if (stepOperator(i, target)) clunks |= 1 << i;
         if (rescue.offsets[i] && lengths[i] <= target + 0.1) rescue.offsets[i] = 0;
       }
